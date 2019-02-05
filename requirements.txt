@@ -1,0 +1,1 @@
+git+https://github.com/nerdocs/pydifact.git#egg=pydifact&subdirectory=src
