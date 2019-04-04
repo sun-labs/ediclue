@@ -8,8 +8,9 @@ class QTY(Segment):
     def __init__(self, segments):
         for i in range(0, len(segments)):
             d = segments[i]
-            if i == 0: self.quantity_identifier = {
-                "quantity_qualifier": d[0],
-                "quantity": d[1],
-                "measure_unit_qualifier": d[2] if len(d) > 2 else None
-            }
+            self.quantity_details = Segment()
+            for j in range(0, len(d)):
+                dd = d[j]
+                if i == 0: self.quantity_details.quantity_qualifier = dd
+                elif i == 1: self.quantity = dd
+                elif i == 2: self.measure_unit_qualifier = dd
