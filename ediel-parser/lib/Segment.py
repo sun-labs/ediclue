@@ -12,6 +12,36 @@ class Segment():
         self.children = children
         return self
 
+    def validate(self, segment):
+        return True # TODO: validate every segment
+
+    """
+    Validate and parse EDIFACT segment
+    @return the parsed segment
+    @error ValueError
+    """
+    def parse(self, segment, children = None):
+        children = self.children if children is None else children
+        n_children = len(children)
+        n_segments = len(segment)
+        parsed = {}
+        if type(segment) is not list:
+            if self.id is None:
+                return segment
+            else:
+                parsed[self.id] = segment
+        else:
+            for i in range(0, n_children):
+                segment_def = children[i]
+                is_mandatory = segment_def.mandatory 
+                out_of_bounds = (i >= n_segments)
+                if out_of_bounds and is_mandatory:
+                    raise ValueError('{} is mandatory and does not exists'.format(segment_def.id))
+                if out_of_bounds:
+                    raise ValueError('out of bounds fam')
+                parsed[segment_def.id] = self.parse(segment[i], segment_def.children)
+        return parsed
+
     def __str__(self):
         keys = filter(lambda k: "__" not in k, dir(self))
         values = map(lambda k: "{}: {}".format(k, getattr(self, k)), keys)
