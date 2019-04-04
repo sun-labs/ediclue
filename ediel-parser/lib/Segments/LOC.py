@@ -1,6 +1,8 @@
 from lib.Segment import Segment
 """
 https://www.truugo.com/edifact/d96a/loc/
+
+TODO: Fix sub segment parsing, for example see QTY.
 """
 class LOC(Segment):
     def __init__(self, segments):
