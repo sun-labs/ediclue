@@ -6,6 +6,7 @@ class Segment():
         self.min = min
         self.max = max
         self.mandatory = mandatory
+        self.children = []
 
     def structure(self, children):
         self.children = children
