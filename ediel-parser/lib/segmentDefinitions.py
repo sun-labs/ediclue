@@ -45,5 +45,14 @@ definitions = {
             Segment("date-time-period", length=(0,35)),
             Segment("date-time-period_format_qualifier", length=(0,3)),
         ])
+    ]),
+    "CAV": Segment().structure([
+        Segment("characteristic_value", mandatory=True, min=1, max=1).structure([
+            Segment("characteristic_value-coded", length=(0,3)),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("characteristic_value", length=(0,35)),
+            Segment("characteristic_value", length=(0,35)),
+        ])
     ])
 }
