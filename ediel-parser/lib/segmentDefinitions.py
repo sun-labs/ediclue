@@ -113,5 +113,21 @@ definitions = {
             Segment("characteristic", length=(0,35)),
             Segment("characteristic", length=(0,35))
         ])
+    ]),
+    "CCI": Segment().structure([
+        Segment("property_class-coded", length=(0,3)),
+        Segment("measurement_details", min=0, max=1).structure([
+            Segment("measurement_dimension-coded", length=(0,3)),
+            Segment("measurement_significance-coded", length=(0,3)),
+            Segment("measurement_attribute-coded", length=(0,3)),
+            Segment("measurement_attribute", length=(0,70))
+        ]),
+        Segment("product_characteristic", min=0, max=1).structure([
+            Segment("characteristic_identification", length=(0,17), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("characteristic", length=(0,35)),
+            Segment("characteristic", length=(0,35))
+        ])
     ])
 }
