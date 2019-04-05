@@ -216,5 +216,14 @@ definitions = {
         Segment("document-message_number", length=(0,35)),
         Segment("message_function-coded", length=(0,3)),
         Segment("response_type-coded", length=(0,3))
+    ]),
+    "MKS": Segment().structure([
+        Segment("sector-subject_identification_qualifier", length=(0,3), mandatory=True),
+        Segment("sales_channel_identification", min=1, max=1, mandatory=True).structure([
+            Segment("sales_channel_identifier", length=(0,17), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+        ]),
+        Segment("action_request-notification-coded", length=(0,3))
     ])
 }
