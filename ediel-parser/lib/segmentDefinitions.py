@@ -271,4 +271,8 @@ definitions = {
             Segment("first-last_sequence_message_transfer_indication", length=(1,1))
         ])
     ]),
+    "UNT": Segment().structure([
+        Segment("number_of_segments_in_a_message", length=(0,6), mandatory=True),
+        Segment("message_reference_number", length=(0,14), mandatory=True)
+    ])
 }
