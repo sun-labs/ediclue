@@ -54,5 +54,21 @@ definitions = {
             Segment("characteristic_value", length=(0,35)),
             Segment("characteristic_value", length=(0,35)),
         ])
+    ]),
+    "LIN": Segment().structure([
+        Segment("line_item_number", length=(0,6)),
+        Segment("action_request-notification-coded", length=(0,3)),
+        Segment("item_number_identification", min=0, max=1).structure([
+            Segment("item_number", length=(0,35)),
+            Segment("item_number_type-coded", length=(0,3)),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+        ]),
+        Segment("sub-line_information", min=0, max=1).structure([
+            Segment("sub-line_indicator-coded", length=(0,3)),
+            Segment("line_item_number", length=(0,6))
+        ]),
+        Segment("configuration_level", length=(0,2)),
+        Segment("configuration-coded", length=(0,3))
     ])
 }
