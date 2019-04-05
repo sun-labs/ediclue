@@ -172,5 +172,38 @@ definitions = {
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("status_reason", length=(0,35)),
         ]),
+    ]),
+    "NAD": Segment().structure([
+        Segment("party_qualifier", length=(0,3), mandatory=True),
+        Segment("party_identification_details", min=0, max=1).structure([
+            Segment("party_id_identification", length=(0,35)),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+        ]),
+        Segment("name_and_address", min=0, max=1).structure([
+            Segment("name_and_address_line_1", length=(0,35), mandatory=True),
+            Segment("name_and_address_line_2", length=(0,35)),
+            Segment("name_and_address_line_3", length=(0,35)),
+            Segment("name_and_address_line_4", length=(0,35)),
+            Segment("name_and_address_line_5", length=(0,35)),
+        ]),
+        Segment("party_name", min=0, max=1).structure([
+            Segment("party_name_1", length=(0,35), mandatory=True),
+            Segment("party_name_2", length=(0,35)),
+            Segment("party_name_3", length=(0,35)),
+            Segment("party_name_4", length=(0,35)),
+            Segment("party_name_5", length=(0,35)),
+            Segment("party_name_format-coded", length=(0,3)),
+        ]),
+        Segment("street", min=0, max=1).structure([
+            Segment("street_and_number-po_box_1", length=(0,35), mandatory=True),
+            Segment("street_and_number-po_box_2", length=(0,35)),
+            Segment("street_and_number-po_box_3", length=(0,35)),
+            Segment("street_and_number-po_box_4", length=(0,35)),
+        ]),
+        Segment("city_name", length=(0,35)),
+        Segment("count_sub_entity_identification", length=(0,9)),
+        Segment("postcode_identification", length=(0,9)),
+        Segment("county-coded", length=(0,3))
     ])
 }
