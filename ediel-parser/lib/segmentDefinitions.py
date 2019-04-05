@@ -225,5 +225,35 @@ definitions = {
             Segment("code_list_responsible_agency-coded", length=(0,3)),
         ]),
         Segment("action_request-notification-coded", length=(0,3))
+    ]),
+    "UNB": Segment().structure([
+        Segment("syntax_identifier", min=1, max=1, mandatory=True).structure([
+            Segment("syntax_identifier", length=(4,4), mandatory=True),
+            Segment("syntax_version_number", length=(1,1), mandatory=True),
+        ]),
+        Segment("interchange_sender", min=1, max=1, mandatory=True).structure([
+            Segment("sender_identification", mandatory=True, length=(0,35)),
+            Segment("partner_identification_code_qualifier", length=(0,4)),
+            Segment("address_for_reverse_routing", length=(0,14))
+        ]),
+        Segment("interchange_recipient", min=1, max=1, mandatory=True).structure([
+            Segment("recipient_identification", length=(0,35), mandatory=True),
+            Segment("partner_identification_code_qualifier", length=(0,4)),
+            Segment("routing_address", length=(0,14)),
+        ]),
+        Segment("date-time_of_preparation", min=1, max=1, mandatory=True).structure([
+            Segment("date_of_preparation", length=(6,6), mandatory=True),
+            Segment("time_of_preparation", length=(4,4), mandatory=True),
+        ]),
+        Segment("interchange_control_reference", length=(0,14), mandatory=True),
+        Segment("recipients_reference-password", min=0, max=1).structure([
+            Segment("recipients_reference-password", length=(0,14), mandatory=True),
+            Segment("recipients_reference-password_qualifier", length=(2,2))
+        ]),
+        Segment("application_reference", length=(0,14)),
+        Segment("processing_priority_code", length=(1,1)),
+        Segment("acknowledgement_request", length=(1,1)),
+        Segment("communications_agreement_id", length=(0,35)),
+        Segment("test_indicator", length=(1,1))
     ])
 }
