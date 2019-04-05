@@ -52,3 +52,6 @@ class Segment():
         keys = filter(lambda k: "__" not in k, dir(self))
         values = map(lambda k: "{}: {}".format(k, getattr(self, k)), keys)
         return "\n".join(values)
+
+# Alias
+Group = Segment
