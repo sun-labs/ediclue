@@ -205,5 +205,16 @@ definitions = {
         Segment("count_sub_entity_identification", length=(0,9)),
         Segment("postcode_identification", length=(0,9)),
         Segment("county-coded", length=(0,3))
+    ]),
+    "BGM": Segment().structure([
+        Segment("document-message_name", min=0, max=1).structure([
+            Segment("document-message_name-coded", length=(0,3)),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("document-message_name", length=(0,35)),
+        ]),
+        Segment("document-message_number", length=(0,35)),
+        Segment("message_function-coded", length=(0,3)),
+        Segment("response_type-coded", length=(0,3))
     ])
 }
