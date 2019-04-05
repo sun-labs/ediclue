@@ -129,5 +129,48 @@ definitions = {
             Segment("characteristic", length=(0,35)),
             Segment("characteristic", length=(0,35))
         ])
+    ]),
+    "STS": Segment().structure([
+        Segment("status_type", min=0, max=1).structure([
+            Segment("status_type-coded", length=(0,3), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+        ]),
+        Segment("status_event", min=0, max=1).structure([
+            Segment("status_event-coded", length=(0,3), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("status_event", length=(0,35)),
+        ]),
+        Segment("status_reason_1", min=0, max=1).structure([
+            Segment("status_reason-coded", length=(0,3), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("status_reason", length=(0,35)),
+        ]),
+        Segment("status_reason_2", min=0, max=1).structure([
+            Segment("status_reason-coded", length=(0,3), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("status_reason", length=(0,35)),
+        ]),
+        Segment("status_reason_3", min=0, max=1).structure([
+            Segment("status_reason-coded", length=(0,3), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("status_reason", length=(0,35)),
+        ]),
+        Segment("status_reason_4", min=0, max=1).structure([
+            Segment("status_reason-coded", length=(0,3), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("status_reason", length=(0,35)),
+        ]),
+        Segment("status_reason_5", min=0, max=1).structure([
+            Segment("status_reason-coded", length=(0,3), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("status_reason", length=(0,35)),
+        ]),
     ])
 }
