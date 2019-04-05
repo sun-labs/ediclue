@@ -18,7 +18,8 @@ class EdielParser():
         if definition is not None:
             return definition.parse(elements, tag=tag)
         else:
-            print("[MISSING SEGMENT] https://www.truugo.com/edifact/d96a/{}".format(tag))
+            if tag != "UNA":
+                print("[MISSING SEGMENT] https://www.truugo.com/edifact/d96a/{}".format(tag))
 
 
     def parse(self, segments = None):
