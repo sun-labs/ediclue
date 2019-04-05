@@ -16,5 +16,27 @@ definitions = {
             Segment("quantity", length=(0,15), mandatory=True),
             Segment("measure_unit_qualifier", length=(0,3))
         ])
+    ]),
+    "LOC": Segment().structure([
+        Segment("place-location_qualifier", mandatory=True, length=(0,3)),
+        Segment("location_identification", min=0, max=1).structure([
+            Segment("place-location_identification", length=(0, 25)),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("place-location", length=(0,70))
+        ]),
+        Segment("related_location_one_identification", min=0, max=1).structure([
+            Segment("related_place-location_one_identification", length=(0,25)),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("related_place-location_one", length=(0, 70))
+        ]),
+        Segment("related_location_two_identification", min=0, max=1).structure([
+            Segment("related_place-location_two_identification", length=(0,25)),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("related_place-location_two", length=(0, 70))
+        ]),
+        Segment("relation-coded", length=(0,3))
     ])
 }
