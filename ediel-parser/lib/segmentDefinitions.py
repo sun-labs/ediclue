@@ -38,5 +38,12 @@ definitions = {
             Segment("related_place-location_two", length=(0, 70))
         ]),
         Segment("relation-coded", length=(0,3))
+    ]),
+    "DTM": Segment().structure([
+        Segment("date-time-period", min=1, max=1, mandatory=True).structure([
+            Segment("date-time-period_qualifier", length=(0,3), mandatory=True),
+            Segment("date-time-period", length=(0,35)),
+            Segment("date-time-period_format_qualifier", length=(0,3)),
+        ])
     ])
 }
