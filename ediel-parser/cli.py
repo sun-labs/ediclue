@@ -1,5 +1,6 @@
 import argparse
 import sys
+import json
 from lib.EdielParser import EdielParser
 
 
@@ -12,4 +13,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     segs = args.input.read()
     e = EdielParser(segs)
-    e.parse()
+
+    result = e.parse()
+    args.output.write(json.dumps(result))

@@ -36,10 +36,13 @@ class Segment():
                 is_mandatory = segment_def.mandatory 
                 out_of_bounds = (i >= n_segments)
                 if out_of_bounds and is_mandatory:
-                    raise ValueError('{} is mandatory and does not exists'.format(segment_def.id))
-                if out_of_bounds:
-                    raise ValueError('out of bounds fam')
-                parsed[segment_def.id] = self.parse(segment[i], segment_def.children)
+                    parsed[segment_def.id] = {
+                        'type': 'error',
+                        'message': 'mandatory field [{}] not supplied'.format(segment_def.id),
+                        'structure': segment_def
+                    }
+                if not out_of_bounds:
+                    parsed[segment_def.id] = self.parse(segment[i], segment_def.children)
         return parsed
 
     def __str__(self):

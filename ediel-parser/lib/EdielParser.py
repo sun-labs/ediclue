@@ -17,12 +17,15 @@ class EdielParser():
         definition = definitions.get(tag)
         if definition is not None:
             return definition.parse(elements)
+        else:
+            print("[MISSING SEGMENT] https://www.truugo.com/edifact/d96a/{}".format(tag))
 
 
     def parse(self, segments = None):
         segments = segments if segments is not None else self.msg.segments
         result = []
         for s in segments:
-            result.append(self.parseSegment(s))
-        print(result)
+            parsed = self.parseSegment(s)
+            result.append(parsed)
+        return result
 
