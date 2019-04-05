@@ -20,11 +20,14 @@ class Segment():
     @return the parsed segment
     @error ValueError
     """
-    def parse(self, segment, children = None):
+    def parse(self, segment, children = None, tag=None):
         children = self.children if children is None else children
         n_children = len(children)
         n_segments = len(segment)
         parsed = {}
+        if tag is not None:
+            parsed['segment'] = tag
+
         if type(segment) is not list:
             if self.id is None:
                 return segment
