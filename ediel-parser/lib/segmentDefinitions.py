@@ -87,5 +87,31 @@ definitions = {
             Segment("significant_digits", length=(0,2))
         ]),
         Segment("surface-layer_indicator-coded", length=(0,3))
+    ]),
+    "IDE": Segment().structure([
+        Segment("identification_qualifier", length=(0,3), mandatory=True),
+        Segment("identification_number", min=1, max=1, mandatory=True).structure([
+            Segment("identity_number", length=(0,35)),
+            Segment("identity_number_qualifier", length=(0,3)),
+            Segment("status-coded", length=(0,3)),
+        ]),
+        Segment("party_identification_details", min=0, max=1).structure([
+            Segment("party_id_identification", length=(0,35), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+        ]),
+        Segment("status-coded", length=(0,3)),
+        Segment("configuration_level", length=(0,2)),
+        Segment("position_identification", min=0, max=1).structure([
+            Segment("hierarchical_id_number", length=(0,12)),
+            Segment("sequence_number", length=(0,6))
+        ]),
+        Segment("product_characteristic", min=0, max=1).structure([
+            Segment("characteristic_identification", length=(0,17), mandatory=True),
+            Segment("code_list_qualifier", length=(0,3)),
+            Segment("code_list_responsible_agency-coded", length=(0,3)),
+            Segment("characteristic", length=(0,35)),
+            Segment("characteristic", length=(0,35))
+        ])
     ])
 }
