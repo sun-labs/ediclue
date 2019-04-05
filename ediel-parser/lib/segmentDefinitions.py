@@ -255,5 +255,20 @@ definitions = {
         Segment("acknowledgement_request", length=(1,1)),
         Segment("communications_agreement_id", length=(0,35)),
         Segment("test_indicator", length=(1,1))
-    ])
+    ]),
+    "UNH": Segment().structure([
+        Segment("message_reference_number", length=(0,14), mandatory=True),
+        Segment("message_identifier", mandatory=True).structure([
+            Segment("message_type_identifier", length=(0,6), mandatory=True),
+            Segment("message_type_version_number", length=(0,3), mandatory=True),
+            Segment("message_type_release_number", length=(0,3), mandatory=True),
+            Segment("controlling_agency", length=(0,2), mandatory=True),
+            Segment("association_assigned_code", length=(0,6))
+        ]),
+        Segment("common_access_reference", length=(0,35)),
+        Segment("status_of_the_transfer").structure([
+            Segment("sequence_message_transfer_number", length=(0,2), mandatory=True),
+            Segment("first-last_sequence_message_transfer_indication", length=(1,1))
+        ])
+    ]),
 }
