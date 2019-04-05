@@ -274,5 +274,9 @@ definitions = {
     "UNT": Segment().structure([
         Segment("number_of_segments_in_a_message", length=(0,6), mandatory=True),
         Segment("message_reference_number", length=(0,14), mandatory=True)
+    ]),
+    "UNZ": Segment().structure([
+        Segment("interchange_control_count", length=(0,6), mandatory=True),
+        Segment("interchange_control_reference", length=(0,14), mandatory=True),
     ])
 }
