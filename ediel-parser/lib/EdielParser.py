@@ -10,23 +10,30 @@ class EdielParser():
         self.msg = Message.from_str(segments)
         self.parsed = {}
 
-    def parseSegment(self, segment):
+    def toDictEach(self, segment):
         tag = segment.tag
         elements = segment.elements
         
         definition = definitions.get(tag)
         if definition is not None:
-            return definition.parse(elements, tag=tag)
+            return definition.toDict(elements, tag=tag)
         else:
             if tag != "UNA":
                 print("[MISSING SEGMENT] https://www.truugo.com/edifact/d96a/{}".format(tag))
+                return None
 
 
-    def parse(self, segments = None):
+    def toDict(self, segments = None):
         segments = segments if segments is not None else self.msg.segments
         result = []
         for s in segments:
-            parsed = self.parseSegment(s)
+            parsed = self.toDictEach(s)
             result.append(parsed)
         return result
+
+    @staticmethod
+    def toList(self, segments):
+        result = []
+        
+        return Segment.flatten(segmentDict)
 

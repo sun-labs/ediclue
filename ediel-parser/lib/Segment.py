@@ -16,11 +16,21 @@ class Segment():
         return True # TODO: validate every segment
 
     """
+    Convert dict edifact segment to
+    list form (for pydifact)
+    """
+    @staticmethod
+    def toList(segments, tag=None):
+        keys = dir(segmentDict)
+        return keys
+
+
+    """
     Validate and parse EDIFACT segment
     @return the parsed segment
     @error ValueError
     """
-    def parse(self, segment, children = None, tag=None):
+    def toDict(self, segment, children = None, tag=None):
         children = self.children if children is None else children
         n_children = len(children)
         n_segments = len(segment)
@@ -45,7 +55,7 @@ class Segment():
                         'structure': segment_def
                     }
                 if not out_of_bounds:
-                    parsed[segment_def.id] = self.parse(segment[i], segment_def.children)
+                    parsed[segment_def.id] = self.toDict(segment[i], segment_def.children)
         return parsed
 
     def __str__(self):
