@@ -70,5 +70,22 @@ definitions = {
         ]),
         Segment("configuration_level", length=(0,2)),
         Segment("configuration-coded", length=(0,3))
+    ]),
+    "MEA": Segment().structure([
+        Segment("measurement_application_qualifier", length=(0,3), mandatory=True),
+        Segment("measurement_details", min=0, max=1).structure([
+            Segment("measurement_dimension-coded", length=(0,3)),
+            Segment("measurement_significance-coded", length=(0,3)),
+            Segment("measurement_attribute-coded", length=(0,3)),
+            Segment("measurement_attribute", length=(0,70))
+        ]),
+        Segment("value-range", min=0, max=1).structure([
+            Segment("measure_unit_qualifier", length=(0,3)),
+            Segment("measurement_value", length=(0,18)),
+            Segment("range_minimum", length=(0,18)),
+            Segment("range_maximum", length=(0,18)),
+            Segment("significant_digits", length=(0,2))
+        ]),
+        Segment("surface-layer_indicator-coded", length=(0,3))
     ])
 }
