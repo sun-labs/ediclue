@@ -14,5 +14,7 @@ if __name__ == '__main__':
     segs = args.input.read()
     e = EdielParser(segs)
 
-    result = e.toDict()
-    args.output.write(json.dumps(result))
+    dictionary = e.toDict()
+    ediList = EdielParser.toList(dictionary)
+    print(EdielParser.toEdifact(ediList))
+    #args.output.write(json.dumps(ediList))

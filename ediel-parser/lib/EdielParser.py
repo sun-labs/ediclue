@@ -1,16 +1,17 @@
 import importlib
 
 from pydifact.message import Message
-from pydifact.segments import Segment
+from pydifact.segments import Segment as PySegment
+from lib.Segment import Segment
 
 from lib.segmentDefinitions import definitions
 
 class EdielParser():
-    def __init__(self, segments):
+    def __init__(self, segments):        
         self.msg = Message.from_str(segments)
         self.parsed = {}
 
-    def toDictEach(self, segment):
+    def toDictEach(self, segment: list):
         tag = segment.tag
         elements = segment.elements
         
@@ -18,12 +19,11 @@ class EdielParser():
         if definition is not None:
             return definition.toDict(elements, tag=tag)
         else:
-            if tag != "UNA":
-                print("[MISSING SEGMENT] https://www.truugo.com/edifact/d96a/{}".format(tag))
-                return None
+            print("[MISSING SEGMENT] https://www.truugo.com/edifact/d96a/{}".format(tag))
+            return None
 
 
-    def toDict(self, segments = None):
+    def toDict(self, segments: list = None):
         segments = segments if segments is not None else self.msg.segments
         result = []
         for s in segments:
@@ -32,8 +32,19 @@ class EdielParser():
         return result
 
     @staticmethod
-    def toList(self, segments):
+    def toList(segments: dict):
         result = []
-        
-        return Segment.flatten(segmentDict)
+        for s in segments:
+            parsed = Segment.toList(s)
+            result.append(parsed)
+        return result
+
+    @staticmethod
+    def toEdifact(segments: list):
+        message = Message()
+        for s in segments:
+            if s is not None and len(s) > 0:
+                tag = s.pop(0)
+                message.add_segment(PySegment(tag, *s))
+        return message
 

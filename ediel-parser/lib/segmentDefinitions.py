@@ -278,5 +278,6 @@ definitions = {
     "UNZ": Segment().structure([
         Segment("interchange_control_count", length=(0,6), mandatory=True),
         Segment("interchange_control_reference", length=(0,14), mandatory=True),
-    ])
+    ]),
+    "UNA": Segment()
 }

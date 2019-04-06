@@ -20,9 +20,18 @@ class Segment():
     list form (for pydifact)
     """
     @staticmethod
-    def toList(segments, tag=None):
-        keys = dir(segmentDict)
-        return keys
+    def toList(segments):
+        if segments is None: return None
+        result = []
+        for k in segments.keys():
+            segment = segments.get(k)
+            if type(segment) is not dict:
+                result.append(segment)
+            else:
+                rec_result = Segment.toList(segment)
+                if rec_result is not None:
+                    result.append(rec_result)
+        return result
 
 
     """
@@ -36,7 +45,7 @@ class Segment():
         n_segments = len(segment)
         parsed = {}
         if tag is not None:
-            parsed['segment'] = tag
+            parsed['tag'] = tag
 
         if type(segment) is not list:
             if self.id is None:
