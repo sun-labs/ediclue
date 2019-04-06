@@ -1,5 +1,3 @@
-import importlib
-
 from pydifact.message import Message
 from pydifact.segments import Segment as PySegment
 from lib.Segment import Segment

@@ -279,5 +279,14 @@ definitions = {
         Segment("interchange_control_count", length=(0,6), mandatory=True),
         Segment("interchange_control_reference", length=(0,14), mandatory=True),
     ]),
-    "UNA": Segment()
+    "UNA": Segment().structure([
+        Segment("service_string_advice")
+    ]),
+    "CNT": Segment().structure([
+        Segment("control", max=1, min=1, mandatory=True).structure([
+            Segment("control_qualifier", length=(0,3), mandatory=True),
+            Segment("control_value", length=(0,18), mandatory=True),
+            Segment("measure_unit_qualifier", length=(0,3))
+        ])
+    ])
 }
