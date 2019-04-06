@@ -2,6 +2,12 @@ from lib.segmentDefinitions import definitions as seg
 from lib.Message import Message
 from lib.Segment import Segment, Group
 
+#Segment(seg.get('UNH'), mandatory=True, max=9)
+
+#seg.get('UNH').props(mandatory=True, max=9)
+#seg.get('UNH')
+test = Segment.From(seg.get('UNH'), mandatory=True, max=9)
+
 definitions = {
     "APERAK": Message().structure([
         Message(seg.get('UNH'), mandatory=True),

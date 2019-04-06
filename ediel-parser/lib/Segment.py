@@ -1,14 +1,27 @@
 class Segment():
 
-    def __init__(self, id = None, *, length=(None, None), min=None, max=None, mandatory=False):
+    def __init__(self, id = None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children = []):
         self.id = id
+        self.tag = tag
         self.length = length
         self.min = min
         self.max = max
         self.mandatory = mandatory
-        self.children = []
+        self.children = children
 
-    def structure(self, children):
+    @classmethod
+    def From(cls, segment, **args):
+        return cls(segment.id, tag=segment.tag, **args)
+
+    @classmethod
+    def Group(cls, id, **args):
+        return cls(id, **args)
+
+    """
+    Add sub elements to the current object
+    """
+    def add(self, *children):
+        children = list(children)
         self.children = children
         return self
 
