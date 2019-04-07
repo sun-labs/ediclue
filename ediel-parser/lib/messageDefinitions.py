@@ -8,6 +8,7 @@ from lib.UNSegment import UNSegment
 # test = Segment.create_from(seg.get('UNH'), mandatory=True, max=9)
 
 definitions = {
+    # https://www.truugo.com/edifact/d96a/aperak/
     "APERAK": Group('APERAK').add(
         UNSegment('UNH', mandatory=True),
         UNSegment('BGM', mandatory=True),
