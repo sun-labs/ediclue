@@ -96,7 +96,7 @@ class Segment():
             if self.id is None:
                 return segment
             else:
-                parsed[self.id] = segment
+                parsed = segment
         else:
             for i in range(0, n_children):
                 segment_def = children[i]
