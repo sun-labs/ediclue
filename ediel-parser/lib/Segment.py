@@ -1,7 +1,8 @@
 class Segment():
 
     def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], elements=[], value=None):
-        self.id = id or tag
+        self.id = tag or id
+        self.tag = tag
         self.length = length
         self.min = min
         self.max = max
@@ -47,13 +48,12 @@ class Segment():
             "length": segment.length,
             "mandatory": segment.mandatory
         }
-        print(args)
         return cls(**args)
 
     @classmethod
     def create_group(cls, id, **args):
         return cls(id, **args)
-
+        
     def set_elements(self, elements):
         self.elements = elements
 
@@ -77,15 +77,18 @@ class Segment():
 
     def _toList(self, segment):
         result = []
-        for k in segments.keys():
-            segment = segments.get(k)
-            if type(segment) is not dict: # base case
-                result.append(segment)
-            else: # recursion
-                rec = self._toList(segment)
-                result.append(rec)
+        if segment.tag is not None:
+            result.append(segment.tag)
+        children = segment.children
+        n_children = len(children)
+        if n_children > 0:
+            for i in range(0, n_children):
+                cur = children[i]
+                result.append(self._toList(segment=cur))
+        else:
+            result = segment.value
         return result
-    
+
     """
     Create dictionary of segments with explanatory keys
     """
@@ -95,8 +98,9 @@ class Segment():
     def _toDict(self, segment):
         result = {}
         children = segment.children
-        if len(children) > 0: # recursion
-            for i in range(0, len(children)):
+        n_children = len(children)
+        if n_children > 0: # recursion
+            for i in range(0, n_children):
                 cur = children[i]
                 result[cur.id] = self._toDict(segment=cur)
         else: # base case
