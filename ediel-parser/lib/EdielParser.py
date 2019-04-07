@@ -15,7 +15,7 @@ class EdielParser():
         
         definition = definitions.get(tag)
         if definition is not None:
-            return definition.toDict(elements, tag=tag)
+            return definition.toDictOld(elements, tag=tag)
         else:
             print("[MISSING SEGMENT] https://www.truugo.com/edifact/d96a/{}".format(tag))
             return None
