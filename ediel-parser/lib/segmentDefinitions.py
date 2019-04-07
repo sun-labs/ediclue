@@ -1,37 +1,37 @@
 from lib.Segment import Segment
 
 definitions = {
-    "SEQ": Segment(tag="SEQ").add(
+    "SEQ": Segment(tag="SEQ").structure(
         Segment("status_indicator_coded"), 
-        Segment("sequence_information", min=0, max=1).add(
+        Segment("sequence_information", min=0, max=1).structure(
             Segment("sequence_number", mandatory=True, length=(0,6)),
             Segment("sequence_number_source", length=(0,3)),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency", length=(0,3))
         )
     ),
-    "QTY": Segment(tag="QTY").add(
-        Segment("quantity_details", mandatory=True, min=1, max=1).add(
+    "QTY": Segment(tag="QTY").structure(
+        Segment("quantity_details", mandatory=True, min=1, max=1).structure(
             Segment("quantity_qualifier", length=(0,3), mandatory=True),
             Segment("quantity", length=(0,15), mandatory=True),
             Segment("measure_unit_qualifier", length=(0,3))
         )
     ),
-    "LOC": Segment(tag="LOC").add(
+    "LOC": Segment(tag="LOC").structure(
         Segment("place-location_qualifier", mandatory=True, length=(0,3)),
-        Segment("location_identification", min=0, max=1).add(
+        Segment("location_identification", min=0, max=1).structure(
             Segment("place-location_identification", length=(0, 25)),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("place-location", length=(0,70))
         ),
-        Segment("related_location_one_identification", min=0, max=1).add(
+        Segment("related_location_one_identification", min=0, max=1).structure(
             Segment("related_place-location_one_identification", length=(0,25)),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("related_place-location_one", length=(0, 70))
         ),
-        Segment("related_location_two_identification", min=0, max=1).add(
+        Segment("related_location_two_identification", min=0, max=1).structure(
             Segment("related_place-location_two_identification", length=(0,25)),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
@@ -39,15 +39,15 @@ definitions = {
         ),
         Segment("relation-coded", length=(0,3))
     ),
-    "DTM": Segment(tag="DTM").add(
-        Segment("date-time-period", min=1, max=1, mandatory=True).add(
+    "DTM": Segment(tag="DTM").structure(
+        Segment("date-time-period", min=1, max=1, mandatory=True).structure(
             Segment("date-time-period_qualifier", length=(0,3), mandatory=True),
             Segment("date-time-period", length=(0,35)),
             Segment("date-time-period_format_qualifier", length=(0,3)),
         )
     ),
-    "CAV": Segment(tag="CAV").add(
-        Segment("characteristic_value", mandatory=True, min=1, max=1).add(
+    "CAV": Segment(tag="CAV").structure(
+        Segment("characteristic_value", mandatory=True, min=1, max=1).structure(
             Segment("characteristic_value-coded", length=(0,3)),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
@@ -55,31 +55,31 @@ definitions = {
             Segment("characteristic_value", length=(0,35)),
         )
     ),
-    "LIN": Segment(tag="LIN").add(
+    "LIN": Segment(tag="LIN").structure(
         Segment("line_item_number", length=(0,6)),
         Segment("action_request-notification-coded", length=(0,3)),
-        Segment("item_number_identification", min=0, max=1).add(
+        Segment("item_number_identification", min=0, max=1).structure(
             Segment("item_number", length=(0,35)),
             Segment("item_number_type-coded", length=(0,3)),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
         ),
-        Segment("sub-line_information", min=0, max=1).add(
+        Segment("sub-line_information", min=0, max=1).structure(
             Segment("sub-line_indicator-coded", length=(0,3)),
             Segment("line_item_number", length=(0,6))
         ),
         Segment("configuration_level", length=(0,2)),
         Segment("configuration-coded", length=(0,3))
     ),
-    "MEA": Segment(tag="MEA").add(
+    "MEA": Segment(tag="MEA").structure(
         Segment("measurement_application_qualifier", length=(0,3), mandatory=True),
-        Segment("measurement_details", min=0, max=1).add(
+        Segment("measurement_details", min=0, max=1).structure(
             Segment("measurement_dimension-coded", length=(0,3)),
             Segment("measurement_significance-coded", length=(0,3)),
             Segment("measurement_attribute-coded", length=(0,3)),
             Segment("measurement_attribute", length=(0,70))
         ),
-        Segment("value-range", min=0, max=1).add(
+        Segment("value-range", min=0, max=1).structure(
             Segment("measure_unit_qualifier", length=(0,3)),
             Segment("measurement_value", length=(0,18)),
             Segment("range_minimum", length=(0,18)),
@@ -88,25 +88,25 @@ definitions = {
         ),
         Segment("surface-layer_indicator-coded", length=(0,3))
     ),
-    "IDE": Segment(tag="IDE").add(
+    "IDE": Segment(tag="IDE").structure(
         Segment("identification_qualifier", length=(0,3), mandatory=True),
-        Segment("identification_number", min=1, max=1, mandatory=True).add(
+        Segment("identification_number", min=1, max=1, mandatory=True).structure(
             Segment("identity_number", length=(0,35)),
             Segment("identity_number_qualifier", length=(0,3)),
             Segment("status-coded", length=(0,3)),
         ),
-        Segment("party_identification_details", min=0, max=1).add(
+        Segment("party_identification_details", min=0, max=1).structure(
             Segment("party_id_identification", length=(0,35), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
         ),
         Segment("status-coded", length=(0,3)),
         Segment("configuration_level", length=(0,2)),
-        Segment("position_identification", min=0, max=1).add(
+        Segment("position_identification", min=0, max=1).structure(
             Segment("hierarchical_id_number", length=(0,12)),
             Segment("sequence_number", length=(0,6))
         ),
-        Segment("product_characteristic", min=0, max=1).add(
+        Segment("product_characteristic", min=0, max=1).structure(
             Segment("characteristic_identification", length=(0,17), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
@@ -114,15 +114,15 @@ definitions = {
             Segment("characteristic", length=(0,35))
         )
     ),
-    "CCI": Segment(tag="CCI").add(
+    "CCI": Segment(tag="CCI").structure(
         Segment("property_class-coded", length=(0,3)),
-        Segment("measurement_details", min=0, max=1).add(
+        Segment("measurement_details", min=0, max=1).structure(
             Segment("measurement_dimension-coded", length=(0,3)),
             Segment("measurement_significance-coded", length=(0,3)),
             Segment("measurement_attribute-coded", length=(0,3)),
             Segment("measurement_attribute", length=(0,70))
         ),
-        Segment("product_characteristic", min=0, max=1).add(
+        Segment("product_characteristic", min=0, max=1).structure(
             Segment("characteristic_identification", length=(0,17), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
@@ -130,64 +130,64 @@ definitions = {
             Segment("characteristic", length=(0,35))
         )
     ),
-    "STS": Segment(tag="STS").add(
-        Segment("status_type", min=0, max=1).add(
+    "STS": Segment(tag="STS").structure(
+        Segment("status_type", min=0, max=1).structure(
             Segment("status_type-coded", length=(0,3), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
         ),
-        Segment("status_event", min=0, max=1).add(
+        Segment("status_event", min=0, max=1).structure(
             Segment("status_event-coded", length=(0,3), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("status_event", length=(0,35)),
         ),
-        Segment("status_reason_1", min=0, max=1).add(
+        Segment("status_reason_1", min=0, max=1).structure(
             Segment("status_reason-coded", length=(0,3), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("status_reason", length=(0,35)),
         ),
-        Segment("status_reason_2", min=0, max=1).add(
+        Segment("status_reason_2", min=0, max=1).structure(
             Segment("status_reason-coded", length=(0,3), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("status_reason", length=(0,35)),
         ),
-        Segment("status_reason_3", min=0, max=1).add(
+        Segment("status_reason_3", min=0, max=1).structure(
             Segment("status_reason-coded", length=(0,3), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("status_reason", length=(0,35)),
         ),
-        Segment("status_reason_4", min=0, max=1).add(
+        Segment("status_reason_4", min=0, max=1).structure(
             Segment("status_reason-coded", length=(0,3), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("status_reason", length=(0,35)),
         ),
-        Segment("status_reason_5", min=0, max=1).add(
+        Segment("status_reason_5", min=0, max=1).structure(
             Segment("status_reason-coded", length=(0,3), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
             Segment("status_reason", length=(0,35)),
         ),
     ),
-    "NAD": Segment(tag="NAD").add(
+    "NAD": Segment(tag="NAD").structure(
         Segment("party_qualifier", length=(0,3), mandatory=True),
-        Segment("party_identification_details", min=0, max=1).add(
+        Segment("party_identification_details", min=0, max=1).structure(
             Segment("party_id_identification", length=(0,35)),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
         ),
-        Segment("name_and_address", min=0, max=1).add(
+        Segment("name_and_address", min=0, max=1).structure(
             Segment("name_and_address_line_1", length=(0,35), mandatory=True),
             Segment("name_and_address_line_2", length=(0,35)),
             Segment("name_and_address_line_3", length=(0,35)),
             Segment("name_and_address_line_4", length=(0,35)),
             Segment("name_and_address_line_5", length=(0,35)),
         ),
-        Segment("party_name", min=0, max=1).add(
+        Segment("party_name", min=0, max=1).structure(
             Segment("party_name_1", length=(0,35), mandatory=True),
             Segment("party_name_2", length=(0,35)),
             Segment("party_name_3", length=(0,35)),
@@ -195,7 +195,7 @@ definitions = {
             Segment("party_name_5", length=(0,35)),
             Segment("party_name_format-coded", length=(0,3)),
         ),
-        Segment("street", min=0, max=1).add(
+        Segment("street", min=0, max=1).structure(
             Segment("street_and_number-po_box_1", length=(0,35), mandatory=True),
             Segment("street_and_number-po_box_2", length=(0,35)),
             Segment("street_and_number-po_box_3", length=(0,35)),
@@ -206,8 +206,8 @@ definitions = {
         Segment("postcode_identification", length=(0,9)),
         Segment("county-coded", length=(0,3))
     ),
-    "BGM": Segment(tag="BGM").add(
-        Segment("document-message_name", min=0, max=1).add(
+    "BGM": Segment(tag="BGM").structure(
+        Segment("document-message_name", min=0, max=1).structure(
             Segment("document-message_name-coded", length=(0,3)),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
@@ -217,36 +217,36 @@ definitions = {
         Segment("message_function-coded", length=(0,3)),
         Segment("response_type-coded", length=(0,3))
     ),
-    "MKS": Segment(tag="MKS").add(
+    "MKS": Segment(tag="MKS").structure(
         Segment("sector-subject_identification_qualifier", length=(0,3), mandatory=True),
-        Segment("sales_channel_identification", min=1, max=1, mandatory=True).add(
+        Segment("sales_channel_identification", min=1, max=1, mandatory=True).structure(
             Segment("sales_channel_identifier", length=(0,17), mandatory=True),
             Segment("code_list_qualifier", length=(0,3)),
             Segment("code_list_responsible_agency-coded", length=(0,3)),
         ),
         Segment("action_request-notification-coded", length=(0,3))
     ),
-    "UNB": Segment(tag="UNB").add(
-        Segment("syntax_identifier", min=1, max=1, mandatory=True).add(
+    "UNB": Segment(tag="UNB").structure(
+        Segment("syntax_identifier", min=1, max=1, mandatory=True).structure(
             Segment("syntax_identifier", length=(4,4), mandatory=True),
             Segment("syntax_version_number", length=(1,1), mandatory=True),
         ),
-        Segment("interchange_sender", min=1, max=1, mandatory=True).add(
+        Segment("interchange_sender", min=1, max=1, mandatory=True).structure(
             Segment("sender_identification", mandatory=True, length=(0,35)),
             Segment("partner_identification_code_qualifier", length=(0,4)),
             Segment("address_for_reverse_routing", length=(0,14))
         ),
-        Segment("interchange_recipient", min=1, max=1, mandatory=True).add(
+        Segment("interchange_recipient", min=1, max=1, mandatory=True).structure(
             Segment("recipient_identification", length=(0,35), mandatory=True),
             Segment("partner_identification_code_qualifier", length=(0,4)),
             Segment("routing_address", length=(0,14)),
         ),
-        Segment("date-time_of_preparation", min=1, max=1, mandatory=True).add(
+        Segment("date-time_of_preparation", min=1, max=1, mandatory=True).structure(
             Segment("date_of_preparation", length=(6,6), mandatory=True),
             Segment("time_of_preparation", length=(4,4), mandatory=True),
         ),
         Segment("interchange_control_reference", length=(0,14), mandatory=True),
-        Segment("recipients_reference-password", min=0, max=1).add(
+        Segment("recipients_reference-password", min=0, max=1).structure(
             Segment("recipients_reference-password", length=(0,14), mandatory=True),
             Segment("recipients_reference-password_qualifier", length=(2,2))
         ),
@@ -256,9 +256,9 @@ definitions = {
         Segment("communications_agreement_id", length=(0,35)),
         Segment("test_indicator", length=(1,1))
     ),
-    "UNH": Segment(tag="UNH").add(
+    "UNH": Segment(tag="UNH").structure(
         Segment("message_reference_number", length=(0,14), mandatory=True),
-        Segment("message_identifier", mandatory=True).add(
+        Segment("message_identifier", mandatory=True).structure(
             Segment("message_type_identifier", length=(0,6), mandatory=True),
             Segment("message_type_version_number", length=(0,3), mandatory=True),
             Segment("message_type_release_number", length=(0,3), mandatory=True),
@@ -266,24 +266,24 @@ definitions = {
             Segment("association_assigned_code", length=(0,6))
         ),
         Segment("common_access_reference", length=(0,35)),
-        Segment("status_of_the_transfer").add(
+        Segment("status_of_the_transfer").structure(
             Segment("sequence_message_transfer_number", length=(0,2), mandatory=True),
             Segment("first-last_sequence_message_transfer_indication", length=(1,1))
         )
     ),
-    "UNT": Segment(tag="UNT").add(
+    "UNT": Segment(tag="UNT").structure(
         Segment("number_of_segments_in_a_message", length=(0,6), mandatory=True),
         Segment("message_reference_number", length=(0,14), mandatory=True)
     ),
-    "UNZ": Segment(tag="UNZ").add(
+    "UNZ": Segment(tag="UNZ").structure(
         Segment("interchange_control_count", length=(0,6), mandatory=True),
         Segment("interchange_control_reference", length=(0,14), mandatory=True),
     ),
-    "UNA": Segment(tag="UNA").add(
+    "UNA": Segment(tag="UNA").structure(
         Segment("service_string_advice")
     ),
-    "CNT": Segment(tag="CNT").add(
-        Segment("control", max=1, min=1, mandatory=True).add(
+    "CNT": Segment(tag="CNT").structure(
+        Segment("control", max=1, min=1, mandatory=True).structure(
             Segment("control_qualifier", length=(0,3), mandatory=True),
             Segment("control_value", length=(0,18), mandatory=True),
             Segment("measure_unit_qualifier", length=(0,3))

@@ -1,6 +1,6 @@
 class Segment():
 
-    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], elements=[], value=None):
+    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], value=None):
         self.id = tag or id
         self.tag = tag
         self.length = length
@@ -8,7 +8,6 @@ class Segment():
         self.max = max
         self.mandatory = mandatory
         self.children = children
-        self.elements = elements
         self.value = value
 
     def __getitem__(self, key):
@@ -38,29 +37,43 @@ class Segment():
 
     @classmethod
     def create_from(cls, segment, **args):
-        if segment is None: return
         args = {
             **args,
             "id": segment.id,
-            "children": segment.children,
+            "tag": segment.tag,
             "max": segment.max,
             "min": segment.min,
             "length": segment.length,
-            "mandatory": segment.mandatory
+            "mandatory": segment.mandatory,
+            "children": segment.children,
         }
         return cls(**args)
 
     @classmethod
-    def create_group(cls, id, **args):
+    def create_group(cls, id=None, **args):
         return cls(id, **args)
-        
+
     def set_elements(self, elements):
         self.elements = elements
+
+    def load(self, segments: list):
+        self._load(segments, self.children)
+
+    def _load(self, segments: list, def_segments: list):
+        n_segments = len(segments)
+        n_def_segments = len(def_segments)
+        for i in range(0, n_def_segments):
+            if (i < n_segments):
+                value = segments[i]
+                if type(value) is list:
+                    self._load(value, def_segments[i].children)
+                else:
+                    def_segments[i].value = value
 
     """
     Add sub elements to the current object
     """
-    def add(self, *children):
+    def structure(self, *children):
         children = list(children)
         self.children = children
         return self
@@ -77,8 +90,6 @@ class Segment():
 
     def _toList(self, segment):
         result = []
-        if segment.tag is not None:
-            result.append(segment.tag)
         children = segment.children
         n_children = len(children)
         if n_children > 0:
@@ -97,6 +108,9 @@ class Segment():
 
     def _toDict(self, segment):
         result = {}
+        tag = segment.tag
+        if tag is not None:
+            result['tag'] = tag
         children = segment.children
         n_children = len(children)
         if n_children > 0: # recursion
