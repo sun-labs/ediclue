@@ -16,7 +16,17 @@ class Segment():
     @classmethod
     def create_from(cls, segment, **args):
         if segment is None: return
-        return cls(segment.id, **args)
+        args = {
+            **args,
+            "id": segment.id,
+            "children": segment.children,
+            "max": segment.max,
+            "min": segment.min,
+            "length": segment.length,
+            "mandatory": segment.mandatory
+        }
+        print(args)
+        return cls(**args)
 
     @classmethod
     def create_group(cls, id, **args):
@@ -53,14 +63,28 @@ class Segment():
                 if rec_result is not None:
                     result.append(rec_result)
         return result
-        
+    
+
+    def toDict(self):
+        return self._toDict(segment=self)
+
+    def _toDict(self, segment):
+        parsed = {}
+        children = segment.children
+        if len(children) > 0: # recursion
+            for i in range(0, len(children)):
+                cur = children[i]
+                parsed[cur.id] = self._toDict(segment=cur)
+        else: # base case
+            parsed = None
+        return parsed
 
     """
     Validate and parse EDIFACT segment
     @return the parsed segment
     @error ValueError
     """
-    def toDict(self, segment=None, children=None, tag=None):
+    def toDictOld(self, segment=None, children=None, tag=None):
         children = self.children if children is None else children
         n_children = len(children) if children is not None else 0
         n_segments = len(segment) if segment is not None else 0
@@ -86,7 +110,7 @@ class Segment():
                     }
                 if not out_of_bounds:
                     value = segment[i] if segment is not None else None
-                    parsed[segment_def.id] = self.toDict(value, segment_def.children)
+                    parsed[segment_def.id] = self.toDictOld(value, segment_def.children)
         return parsed
 
 Group = Segment.create_group
