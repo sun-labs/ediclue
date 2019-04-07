@@ -1,21 +1,29 @@
 class Segment():
 
-    def __init__(self, id = None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children = []):
-        self.id = id
-        self.tag = tag
+    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], elements=[]):
+        self.id = id or tag
         self.length = length
         self.min = min
         self.max = max
         self.mandatory = mandatory
         self.children = children
+        self.elements = elements
 
     @classmethod
-    def From(cls, segment, **args):
-        return cls(segment.id, tag=segment.tag, **args)
+    def create_template(cls, id=None, **args):
+        return cls(id, tag=segment.tag, **args)
 
     @classmethod
-    def Group(cls, id, **args):
+    def create_from(cls, segment, **args):
+        if segment is None: return
+        return cls(segment.id, **args)
+
+    @classmethod
+    def create_group(cls, id, **args):
         return cls(id, **args)
+
+    def set_elements(self, elements):
+        self.elements = elements
 
     """
     Add sub elements to the current object
@@ -45,17 +53,17 @@ class Segment():
                 if rec_result is not None:
                     result.append(rec_result)
         return result
-
+        
 
     """
     Validate and parse EDIFACT segment
     @return the parsed segment
     @error ValueError
     """
-    def toDict(self, segment, children = None, tag=None):
+    def toDict(self, segment=None, children=None, tag=None):
         children = self.children if children is None else children
-        n_children = len(children)
-        n_segments = len(segment)
+        n_children = len(children) if children is not None else 0
+        n_segments = len(segment) if segment is not None else 0
         parsed = {}
         if tag is not None:
             parsed['tag'] = tag
@@ -68,8 +76,8 @@ class Segment():
         else:
             for i in range(0, n_children):
                 segment_def = children[i]
-                is_mandatory = segment_def.mandatory 
-                out_of_bounds = (i >= n_segments)
+                is_mandatory = segment_def.mandatory
+                out_of_bounds = (i >= n_segments) and segment is not None
                 if out_of_bounds and is_mandatory:
                     parsed[segment_def.id] = {
                         'type': 'error',
@@ -77,13 +85,9 @@ class Segment():
                         'structure': segment_def
                     }
                 if not out_of_bounds:
-                    parsed[segment_def.id] = self.toDict(segment[i], segment_def.children)
+                    value = segment[i] if segment is not None else None
+                    parsed[segment_def.id] = self.toDict(value, segment_def.children)
         return parsed
 
-    def __str__(self):
-        keys = filter(lambda k: "__" not in k, dir(self))
-        values = map(lambda k: "{}: {}".format(k, getattr(self, k)), keys)
-        return "\n".join(values)
-
-# Alias
-Group = Segment
+Group = Segment.create_group
+From = Segment.create_from

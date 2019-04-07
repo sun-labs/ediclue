@@ -1,37 +1,36 @@
-from lib.segmentDefinitions import definitions as seg
-from lib.Message import Message
-from lib.Segment import Segment, Group
+from lib.Segment import Group
+from lib.UNSegment import UNSegment
 
 #Segment(seg.get('UNH'), mandatory=True, max=9)
 
 #seg.get('UNH').props(mandatory=True, max=9)
 #seg.get('UNH')
-test = Segment.From(seg.get('UNH'), mandatory=True, max=9)
+# test = Segment.create_from(seg.get('UNH'), mandatory=True, max=9)
 
 definitions = {
-    "APERAK": Message().structure([
-        Message(seg.get('UNH'), mandatory=True),
-        Message(seg.get('BGM'), mandatory=True),
-        Message(seg.get('DTM'), max=9),
-        Message(seg.get('FTX'), max=9),
-        Message(seg.get('CNT'), max=9),
-        Message(Group('GRP1'), max=9).structure([
-            Message(seg.get('RFF'), mandatory=True),
-            Message(seg.get('DTM'), max=9)
-        ]),
-        Message(Group('GRP2'), max=9).structure([
-            Message(seg.get('NAD'), mandatory=True),
-            Message(seg.get('CTA'), max=9),
-            Message(seg.get('COM'), max=9)
-        ]),
-        Message(Group('GRP3'), max=999).structure([
-            Message(seg.get('ERC'), mandatory=True),
-            Message(seg.get('FTX'), max=1),
-            Message(Group('GRP4'), max=1).structure([
-                Message(seg.get('RFF'), mandatory=True),
-                Message(seg.get('FTX'), max=9),
-            ])
-        ]),
-        Message(seg.get('UNT'), mandatory=True)
-    ])
+    "APERAK": Group('APERAK').add(
+        UNSegment('UNH', mandatory=True),
+        UNSegment('BGM', mandatory=True),
+        UNSegment('DTM', max=9),
+        UNSegment('FTX', max=9),
+        UNSegment('CNT', max=9),
+        Group('GRP1', max=9).add(
+            UNSegment('RFF', mandatory=True),
+            UNSegment('DTM', max=9)
+        ),
+        Group('GRP2', max=9).add(
+            UNSegment('NAD', mandatory=True),
+            UNSegment('CTA', max=9),
+            UNSegment('COM', max=9)
+        ),
+        Group('GRP3', max=999).add(
+            UNSegment('ERC', mandatory=True),
+            UNSegment('FTX', max=1),
+            Group('GRP4', max=1).add(
+                UNSegment('RFF', mandatory=True),
+                UNSegment('FTX', max=9),
+            )
+        ),
+        UNSegment('UNT', mandatory=True)
+    )
 }
