@@ -1,6 +1,6 @@
 class Segment():
 
-    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], elements=[]):
+    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], elements=[], value=None):
         self.id = id or tag
         self.length = length
         self.min = min
@@ -8,6 +8,28 @@ class Segment():
         self.mandatory = mandatory
         self.children = children
         self.elements = elements
+        self.value = value
+
+    def __getitem__(self, key):
+        for child in self.children:
+            if child.id == key:
+                return child
+        raise IndexError('{} does not exist'.format(key))
+        
+    def __setitem__(self, key, value):
+        for child in self.children:
+            if child.id == key:
+                child.value = value
+                return
+        raise IndexError('{} does not exist'.format(key))
+    
+    def __delitem__(self, key):
+        children = self.children
+        for i in range(0, len(children)):
+            child = children[i]
+            if child.id == key:
+                return self.children.pop(i)
+        raise IndexError('{} does not exist'.format(key))
 
     @classmethod
     def create_template(cls, id=None, **args):
