@@ -1,7 +1,7 @@
 import argparse
 import sys
 import json
-from lib.EdielParser import EdielParser
+from lib.EdielParser import EDIParser
 from lib.Generator import Generator
 
 
@@ -16,22 +16,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     input_data = args.input.read()
-    parser = EdielParser(input_data)
-
-    # default output is input
-    output = input_data
-
-    if args.to == 'json':
-        dictionary = parser.toDict()
-        output = json.dumps(dictionary)
-    elif args.to == 'list':
-        output = parser.msg
-    elif args.to == 'raw':
-        pass
+    parser = EDIParser(input_data)
 
     if args.aperak is True:
         aperak = Generator.getAperakFor(parser.toDict())
         print(aperak)
         exit(0)
-
-    print(output)

@@ -1,12 +1,6 @@
 from lib.Segment import Group
 from lib.UNSegment import UNSegment
 
-#Segment(seg.get('UNH'), mandatory=True, max=9)
-
-#seg.get('UNH').props(mandatory=True, max=9)
-#seg.get('UNH')
-# test = Segment.create_from(seg.get('UNH'), mandatory=True, max=9)
-
 definitions = {
     # https://www.truugo.com/edifact/d96a/aperak/
     "APERAK": Group('APERAK').add(
