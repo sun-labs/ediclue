@@ -1,5 +1,7 @@
 import json
 from datetime import datetime
+from functools import reduce
+
 from pydifact.message import Message as PMessage
 from pydifact.segments import Segment as PSegment
 
@@ -70,34 +72,64 @@ class EDIParser():
     Generate aperak based on payload information
     """
     def create_aperak(self, segments = None) -> [Segment]:
+
+        segments = self.segments if segments is None else segments
+
         OUR_EDIEL_ID = '27860'
         RECIPIENT_EDIEL_ID = self.segments['UNB']['interchange_sender'][0].value
-        partner_identification_code_qualifier = self.segments['UNB']['interchange_sender']['partner_identification_code_qualifier'].value
+        partner_identification_code_qualifier = segments['UNB']['interchange_sender']['partner_identification_code_qualifier'].value
         timestamp_now = edi.format_timestamp(datetime.now())
-        reference_no = self.segments['BGM']['r:1004'].value
+        reference_no = segments['BGM']['r:1004'].value
 
-        aperak = UNMessage('APERAK')
-        aperak['UNB']['syntax_identifier']['syntax_identifier'] = 'UNOB'
-        aperak['UNB']['syntax_identifier']['syntax_version_number'] = '3'
-        aperak['UNB']['interchange_sender'] = [OUR_EDIEL_ID, partner_identification_code_qualifier]
-        aperak['UNB']['interchange_recipient'] = [RECIPIENT_EDIEL_ID, partner_identification_code_qualifier]
-        aperak['UNB']['date-time_of_preparation'] = [timestamp_now[:8], timestamp_now[8:]]
-        # aperak['UNB']['interchange_control_reference'] = 
+        aperak = []
+        aperak.append(UNSegment('UNA'))
 
-        aperak['UNH'][0] = '1'
-        aperak['UNH'][1][0] = 'APERAK'
-        aperak['UNH'][1][1] = 'D'
-        aperak['UNH'][1][2] = '96A'
-        aperak['UNH'][1][3] = 'UN'
-        aperak['UNH'][1][4] = 'EDIEL2'
-        aperak['BGM'][3] = '27'
-        aperak['DTM'][0][0] = '137'
-        aperak['DTM'][0][1] = timestamp_now
-        aperak['DTM'][0][2] = '203' # CCYYMMDDHHmm
+        unb = UNSegment('UNB')
+        unb['syntax_identifier']['syntax_identifier'] = 'UNOB'
+        unb['syntax_identifier']['syntax_version_number'] = '3'
+        unb['interchange_sender'] = [OUR_EDIEL_ID, partner_identification_code_qualifier]
+        unb['interchange_recipient'] = [RECIPIENT_EDIEL_ID, partner_identification_code_qualifier]
+        unb['date-time_of_preparation'] = [timestamp_now[:8], timestamp_now[8:]]
+        # unb['interchange_control_reference'] = 
+        aperak.append(unb)
+        
+        unh = UNSegment('UNH')
+        unh[0] = '1'
+        unh[1][0] = 'APERAK'
+        unh[1][1] = 'D'
+        unh[1][2] = '96A'
+        unh[1][3] = 'UN'
+        unh[1][4] = 'EDIEL2'
+        aperak.append(unh)
 
-        aperak['GRP1']['RFF'][0]['r:1154'] = reference_no
-        aperak['UNT'][0] = '5' # TODO: make dynamically
-        aperak['UNT'][1] = self.segments['UNH']['r:0062']
+        bgm = UNSegment('BGM')
+        bgm[3] = '27'
+        aperak.append(bgm)
+
+        dtm = UNSegment('DTM')
+        dtm[0][0] = '137'
+        dtm[0][1] = timestamp_now
+        dtm[0][2] = '203' # CCYYMMDDHHmm
+        aperak.append(dtm)
+
+        
+        dtm2 = UNSegment('DTM')
+        dtm2[0][0] = '137'
+        dtm2[0][1] = timestamp_now
+        dtm2[0][2] = '203' # CCYYMMDDHHmm
+        aperak.append(dtm2)
+
+        rff = UNSegment('RFF')
+        rff[0]['r:1154'] = reference_no
+        aperak.append(rff)
+
+        unt = UNSegment('UNT')
+        unt[0] = str(reduce(lambda acc, s: acc + 1, aperak, 0) - 2)
+        unt[1] = segments['UNH']['r:0062']
+        aperak.append(unt)
+
+        return aperak
+
 
         #print(aperak)
 

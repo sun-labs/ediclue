@@ -76,7 +76,7 @@ class Segment():
             "min": segment.min,
             "length": segment.length,
             "mandatory": segment.mandatory,
-            "children": segment.children,
+            "children": segment.children
         }
         return cls(**args)
 
@@ -103,6 +103,9 @@ class Segment():
                         def_segments[i][0] = value
                     else:
                         def_segments[i].value = value
+    
+    def add_segment(self, segment):
+        self.children.append(segment)
 
     """
     Add sub elements to the current object
