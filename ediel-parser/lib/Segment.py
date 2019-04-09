@@ -24,12 +24,10 @@ class Segment():
             return self.children[key]
         raise IndexError(key + ' does not exist')
         
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str or int, value: list or str):
         if type(value) is list:
             for i in range(0, len(value)):
-                cur = value[i]
-                self.children[i].value = cur
-                return
+                self[key][i] = value[i]
         if type(key) is str:
             for child in self.children:
                 if 'r:' in key:
