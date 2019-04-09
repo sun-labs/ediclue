@@ -32,19 +32,7 @@ class Segment():
         raise IndexError('{} does not exist'.format(key))
 
     def __str__(self):
-        message = ''
-        n_children = len(self.children)
-        if self.tag is not None:
-            message += '[{}] '.format(self.tag)
-        if type(self.children) is list and n_children > 0:
-            for child in self.children:
-                message += child.__str__()
-        else:
-            if self.tag is None:
-                message += '({}:{}), '.format(self.id, self.value)
-
-        if self.tag is not None:
-            message += '\n'
+        message = self.toDict().__str__()
         return message
         
 

@@ -4,6 +4,7 @@ from pydifact.segments import Segment as PSegment
 
 from lib.Segment import Segment, Group
 from lib.UNSegment import UNSegment
+from lib.UNMessage import UNMessage
 
 class EDIParser():
     def __init__(self, payload: str, format: str):
@@ -56,6 +57,10 @@ class EDIParser():
             return segments
         else:
             return segment
+
+    def create_aperak(self, segments = None) -> [Segment]:
+        aperak = UNMessage('APERAK')
+        print(aperak)
 
     """
     Dictionary out of payload segments
