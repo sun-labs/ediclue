@@ -285,5 +285,13 @@ definitions = {
             Segment("control_value", length=(0,18), mandatory=True),
             Segment("measure_unit_qualifier", length=(0,3))
         )
+    ),
+    "RFF": Segment(tag="RFF").structure(
+        Segment("reference", max=1, min=1, mandatory=True, ref='C506').structure(
+            Segment("reference_qualifier", length=(0,3), mandatory=True, ref='1153'),
+            Segment("reference_number", length=(0,35), ref='1154'),
+            Segment("line_number", length=(0,6), ref='1156'),
+            Segment("reference_version_number", length=(0,35), ref='4000')
+        )
     )
 }
