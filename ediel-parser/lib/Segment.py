@@ -1,6 +1,6 @@
 class Segment():
 
-    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], value=None, ref=None):
+    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], value=None, ref=None, group=False):
         self.id = tag or id
         self.tag = tag
         self.length = length
@@ -10,6 +10,7 @@ class Segment():
         self.children = children
         self.value = value
         self.ref = ref
+        self.group = group
 
     def __getitem__(self, key):
         if type(key) is str:
@@ -75,7 +76,7 @@ class Segment():
 
     @classmethod
     def create_group(cls, id=None, **args):
-        return cls(id, **args)
+        return cls(id, group=True, **args)
 
     def set_elements(self, elements):
         self.elements = elements
