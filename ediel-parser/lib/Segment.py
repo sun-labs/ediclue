@@ -11,17 +11,25 @@ class Segment():
         self.value = value
 
     def __getitem__(self, key):
-        for child in self.children:
-            if child.id == key:
-                return child
-        raise IndexError('{} does not exist'.format(key))
+        if type(key) is str:
+            for child in self.children:
+                if child.id == key or child.tag == key: 
+                    return child
+        if type(key) is int:
+            return self.children[i]
+        raise IndexError(key + ' does not exist')
         
     def __setitem__(self, key, value):
-        for child in self.children:
-            if child.id == key:
-                child.value = value
-                return
-        raise IndexError('{} does not exist'.format(key))
+        if type(key) is str:
+            for child in self.children:
+                if child.id == key or child.tag == key: 
+                    child.value = value
+                    return
+        if type(key) is int:
+            self.children[key].value = value
+            return
+        raise IndexError(str(key) + ' does not exist')
+
     
     def __delitem__(self, key):
         children = self.children
