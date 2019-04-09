@@ -81,19 +81,17 @@ class EDIParser():
         aperak['DTM'][0][1] = edi.format_timestamp(datetime.now())
         aperak['DTM'][0][2] = '203' # CCYYMMDDHHmm
 
-        reference_no = self.segments['BGM']
-        print(reference_no)
+        reference_no = self.segments['BGM']['r:1004'].value
+        aperak['GRP1']['RFF'][0]['r:1154'] = reference_no
 
-
-
-        print(aperak)
+        return aperak
 
     """
     Dictionary out of payload segments
     """
     def toDict(self, segments = None) -> list:
         segments = self.segments if segments is None else segments
-        raw_result = map(lambda s: s.toDict(), self.segments)
+        raw_result = map(lambda s: s.toDict(), segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
 
@@ -102,7 +100,7 @@ class EDIParser():
     """
     def toList(self, segments = None) -> list:
         segments = self.segments if segments is None else segments
-        raw_result = map(lambda s: [s.tag, s.toList()], self.segments)
+        raw_result = map(lambda s: [s.tag, s.toList()], segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
 
@@ -112,7 +110,7 @@ class EDIParser():
     def toEdi(self, segments = None) -> str:
         segments = self.segments if segments is None else segments
         message = PMessage()
-        for s in self.segments:
+        for s in segments:
             elements = s.toList()
             if elements is not None and len(elements) > 0:
                 tag = s.tag
