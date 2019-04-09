@@ -75,11 +75,18 @@ class EDIParser():
 
         segments = self.segments if segments is None else segments
 
+        UNIQUE_ID = '1333333777'
         OUR_EDIEL_ID = '27860'
         RECIPIENT_EDIEL_ID = self.segments['UNB']['interchange_sender'][0].value
         partner_identification_code_qualifier = segments['UNB']['interchange_sender']['partner_identification_code_qualifier'].value
         timestamp_now = edi.format_timestamp(datetime.now())
         reference_no = segments['BGM']['r:1004'].value
+
+        doc_name = segments['BGM']['document-message_name']
+        doc_message_name_code = doc_name['document-message_name-coded'].value
+        doc_responsible_agency = doc_name['code_list_responsible_agency-coded'].value
+        doc_message_number = segments['BGM']['document-message_number'].value
+        application_reference = segments['UNB']['application_reference'].value
 
         aperak = []
         aperak.append(UNSegment('UNA'))
@@ -90,7 +97,8 @@ class EDIParser():
         unb['interchange_sender'] = [OUR_EDIEL_ID, partner_identification_code_qualifier]
         unb['interchange_recipient'] = [RECIPIENT_EDIEL_ID, partner_identification_code_qualifier]
         unb['date-time_of_preparation'] = [timestamp_now[:8], timestamp_now[8:]]
-        # unb['interchange_control_reference'] = 
+        unb['interchange_control_reference'] = UNIQUE_ID
+        unb['application_reference'] = application_reference
         aperak.append(unb)
         
         unh = UNSegment('UNH')
@@ -106,6 +114,15 @@ class EDIParser():
         dtm[0] = ['137', timestamp_now, '203']
         aperak.append(dtm)
 
+        timezone = UNSegment('DTM')
+        timezone[0] = ['735', '+0100', '406']
+        aperak.append(timezone)
+
+        doc = UNSegment('DOC')
+        doc[0] = [doc_message_name_code, '', doc_responsible_agency]
+        doc[1] = [doc_message_number]
+        aperak.append(doc)
+
         rff = UNSegment('RFF')
         rff[0]['r:1154'] = reference_no
         aperak.append(rff)
@@ -114,6 +131,10 @@ class EDIParser():
         unt[0] = str(reduce(lambda acc, s: acc + 1, aperak, 0) - 2)
         unt[1] = segments['UNH']['r:0062']
         aperak.append(unt)
+
+        unz = UNSegment('UNZ')
+        unz[0] = '1'
+        unz[1] = UNIQUE_ID
 
         return aperak
 
