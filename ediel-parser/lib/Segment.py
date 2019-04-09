@@ -64,6 +64,7 @@ class Segment():
             **args,
             "id": segment.id,
             "tag": segment.tag,
+            "ref": segment.ref,
             "max": segment.max,
             "min": segment.min,
             "length": segment.length,
