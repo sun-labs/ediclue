@@ -320,5 +320,18 @@ definitions = {
             Segment("free_text_5", ref='4440'),
         ),
         Segment("language-coded", ref='3453')
+    ),
+    "COM": Segment(tag="COM").structure(
+        Segment("communication_contact", mandatory=True, ref='C076').structure(
+            Segment("communication_number", mandatory=True, ref='3148'),
+            Segment("communcation_channel_qualifier", mandatory=True, ref='3155')
+        )
+    ),
+    "CTA": Segment(tag="CTA").structure(
+        Segment("contact_function-coded", ref='3139'),
+        Segment("department_or_employee_details", ref='C056').structure(
+            Segment("department_or_employee_identification", ref='3413'),
+            Segment("department_or_employee", ref='3412')
+        )
     )
 }
