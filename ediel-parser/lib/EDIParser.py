@@ -57,18 +57,29 @@ class EDIParser():
         else:
             return segment
 
-
-    def toDict(self):
+    """
+    Dictionary out of payload segments
+    """
+    def toDict(self, segments = None) -> list:
+        segments = self.segments if segments is None else segments
         raw_result = map(lambda s: s.toDict(), self.segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
 
-    def toList(self):
+    """
+    List out of payload segments
+    """
+    def toList(self, segments = None) -> list:
+        segments = self.segments if segments is None else segments
         raw_result = map(lambda s: [s.tag, s.toList()], self.segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
 
-    def toEdi(self):
+    """
+    EDI string out of payload segments
+    """
+    def toEdi(self, segments = None) -> str:
+        segments = self.segments if segments is None else segments
         message = PMessage()
         for s in self.segments:
             elements = s.toList()
