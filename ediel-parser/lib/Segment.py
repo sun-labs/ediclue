@@ -99,7 +99,10 @@ class Segment():
                 if type(value) is list:
                     self._load(value, def_segments[i].children)
                 else:
-                    def_segments[i].value = value
+                    if len(def_segments[i]) > 0:
+                        def_segments[i][0] = value
+                    else:
+                        def_segments[i].value = value
 
     """
     Add sub elements to the current object
