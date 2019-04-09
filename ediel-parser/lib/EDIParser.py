@@ -1,10 +1,12 @@
 import json
+from datetime import datetime
 from pydifact.message import Message as PMessage
 from pydifact.segments import Segment as PSegment
 
 from lib.Segment import Segment, Group
 from lib.UNSegment import UNSegment
 from lib.UNMessage import UNMessage
+import lib.ediTools as edi
 
 class EDIParser():
     def __init__(self, payload: str, format: str):
@@ -18,25 +20,31 @@ class EDIParser():
         elif self.format == 'json':
             return self.parse_json()
 
+    def get_props_for(self, segment) -> (str, list):
+        if self.format == 'json':
+            return segment.pop(0), segment
+        elif self.format == 'edi':
+            return segment.tag, segment.elements
+
+    def load_segment(self, segment):
+        tag, elements = self.get_props_for(segment)
+        template = UNSegment(tag)
+        template.load(elements)
+        return template
+
     def parse_edi(self):
         message = PMessage.from_str(self.payload)
-        segments = []
-        for s in message.segments:
-            tag, elements = s.tag, s.elements
-            template = UNSegment(tag)
-            template.load(elements)
-            segments.append(template)
+        segments = Group(self.format).structure(
+            *map(self.load_segment, message.segments)
+        )
         return segments
 
     def parse_json(self):
         segments = []
         segment_list = self.flatten_json()
-        for segment in segment_list:
-            tag = segment.pop(0)
-            elements = segment
-            template = UNSegment(tag)
-            template.load(elements)
-            segments.append(template)
+        segments = Group(self.format).structure(
+            *map(self.load_segment, segment_list)
+        )
         return segments
 
     def flatten_json(self) -> list:
@@ -58,8 +66,26 @@ class EDIParser():
         else:
             return segment
 
+    """
+    Generate aperak based on payload information
+    """
     def create_aperak(self, segments = None) -> [Segment]:
         aperak = UNMessage('APERAK')
+        aperak['UNH'][1][0] = 'APERAK'
+        aperak['UNH'][1][1] = 'D'
+        aperak['UNH'][1][2] = '96A'
+        aperak['UNH'][1][3] = 'UN'
+        aperak['UNH'][1][4] = 'EDIEL2'
+        aperak['BGM'][3] = '27'
+        aperak['DTM'][0][0] = '137'
+        aperak['DTM'][0][1] = edi.format_timestamp(datetime.now())
+        aperak['DTM'][0][2] = '203' # CCYYMMDDHHmm
+
+        reference_no = self.segments['BGM']
+        print(reference_no)
+
+
+
         print(aperak)
 
     """

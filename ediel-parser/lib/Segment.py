@@ -16,7 +16,7 @@ class Segment():
                 if child.id == key or child.tag == key: 
                     return child
         if type(key) is int:
-            return self.children[i]
+            return self.children[key]
         raise IndexError(key + ' does not exist')
         
     def __setitem__(self, key, value):
