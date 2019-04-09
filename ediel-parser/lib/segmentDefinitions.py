@@ -333,5 +333,22 @@ definitions = {
             Segment("department_or_employee_identification", ref='3413'),
             Segment("department_or_employee", ref='3412')
         )
+    ),
+    "DOC": Segment(tag="DOC").structure(
+        Segment("document-message_name", ref='C002', mandatory=True).structure(
+            Segment("document-message_name-coded", ref='1001'),
+            Segment("code_list_qualifier", ref='1131'),
+            Segment("code_list_responsible_agency-coded", length=(0,3), ref='3055'),
+            Segment("document-message_name", ref='1000')
+        ),
+        Segment("document-message_details", ref='C503').structure(
+            Segment("document-message_number", ref='1004'),
+            Segment("document-message_status-coded", ref='1373'),
+            Segment("document-message_source", ref='1366'),
+            Segment("language-coded", ref='3453')
+        ),
+        Segment('communication_channel_identifier-coded', ref='3153'),
+        Segment("number_of_copies_of_document_required", ref='1220'),
+        Segment("number_of_originals_of_document_required", ref='1218')
     )
 }
