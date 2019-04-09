@@ -4,6 +4,7 @@ from lib.UNSegment import UNSegment
 definitions = {
     # https://www.truugo.com/edifact/d96a/aperak/
     "APERAK": Group('APERAK').structure(
+        UNSegment('UNB', mandatory=True),
         UNSegment('UNH', mandatory=True),
         UNSegment('BGM', mandatory=True),
         UNSegment('DTM', max=9),
@@ -26,6 +27,7 @@ definitions = {
                 UNSegment('FTX', max=9),
             )
         ),
-        UNSegment('UNT', mandatory=True)
+        UNSegment('UNT', mandatory=True),
+        UNSegment('UNZ', mandatory=True)
     )
 }
