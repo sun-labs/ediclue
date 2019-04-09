@@ -15,7 +15,8 @@ class Segment():
         if type(key) is str:
             for child in self.children:
                 if 'r:' in key:
-                    if child.ref == key: return child
+                    clean_key = key.replace('r:', '')
+                    if child.ref == clean_key: return child
                 else:
                     if child.id == key or child.tag == key: return child
         if type(key) is int:
@@ -25,9 +26,15 @@ class Segment():
     def __setitem__(self, key, value):
         if type(key) is str:
             for child in self.children:
-                if child.id == key or child.tag == key: 
-                    child.value = value
-                    return
+                if 'r:' in key:
+                    clean_key = key.replace('r:', '')
+                    if child.ref == clean_key: 
+                        child.value = value
+                        return
+                else:
+                    if child.id == key or child.tag == key: 
+                        child.value = value
+                        return
         if type(key) is int:
             self.children[key].value = value
             return
