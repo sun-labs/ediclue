@@ -25,6 +25,11 @@ class Segment():
         raise IndexError(key + ' does not exist')
         
     def __setitem__(self, key, value):
+        if type(value) is list:
+            for i in range(0, len(value)):
+                cur = value[i]
+                self.children[i].value = cur
+                return
         if type(key) is str:
             for child in self.children:
                 if 'r:' in key:
@@ -53,6 +58,9 @@ class Segment():
     def __str__(self):
         message = self.toDict().__str__()
         return message
+
+    def __len__(self):
+        return len(self.children)
         
 
     @classmethod
