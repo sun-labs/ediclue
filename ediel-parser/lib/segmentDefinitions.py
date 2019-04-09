@@ -296,5 +296,12 @@ definitions = {
             Segment("line_number", length=(0,6), ref='1156'),
             Segment("reference_version_number", length=(0,35), ref='4000')
         )
+    ),
+    "ERC": Segment(tag="ERC").structure(
+        Segment("application_error_detail", min=1, max=1, mandatory=True, ref='C901').structure(
+            Segment("application_error_identification", mandatory=True, length=(0,8), ref='9321'),
+            Segment("code_list_qualifier", length=(0,3), ref='1131'),
+            Segment("code_list_responsible_agency-coded", length=(0,3), ref='3055')
+        )
     )
 }
