@@ -95,10 +95,13 @@ class Segment():
         if n_children > 0:
             for i in range(0, n_children):
                 cur = children[i]
-                result.append(self._toList(segment=cur))
+                value = self._toList(segment=cur)
+                if value is not None:
+                    result.append(value)
         else:
-            result = segment.value
-        return result
+            if segment.value is not None:
+                result = segment.value 
+        return result if len(result) > 0 else None
 
     """
     Create dictionary of segments with explanatory keys

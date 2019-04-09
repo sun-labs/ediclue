@@ -10,8 +10,8 @@ if __name__ == '__main__':
     parser.add_argument('--input', type=argparse.FileType('r'), default=sys.stdin)
     parser.add_argument('--output', type=argparse.FileType('w'), default=sys.stdout)
 
-    parser.add_argument('--from', choices=['edifact'], default='edifact'),
-    parser.add_argument('--to', choices=['json', 'raw', 'json-arr'], default='json')
+    parser.add_argument('--from', choices=['edi'], default='edi'),
+    parser.add_argument('--to', choices=['json', 'raw', 'json-arr', 'edi'], default='json')
 
     parser.add_argument('--aperak', action='store_true')
 
@@ -26,7 +26,8 @@ if __name__ == '__main__':
         result = json.dumps(parser.toList())
     elif args.to == 'raw':
         result = payload
-        
+    elif args.to == 'edi':
+        result = parser.toEdi()
 
     if args.aperak is True:
         aperak = parser.create_aperak()

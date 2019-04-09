@@ -20,20 +20,22 @@ class EDIParser():
         return segments
 
     def toDict(self):
-        return list(map(lambda s: s.toDict(), self.segments))
+        raw_result = map(lambda s: s.toDict(), self.segments)
+        result = filter(lambda s: s is not None, raw_result)
+        return list(result)
 
     def toList(self):
-        return list(map(lambda s: (s.tag, s.toList()), self.segments))
+        raw_result = map(lambda s: [s.tag, s.toList()], self.segments)
+        result = filter(lambda s: s is not None, raw_result)
+        return list(result)
 
-    def toEdifact(self):
-        pass
-    
-    @staticmethod
-    def toEdifact(segments: list):
+    def toEdi(self):
         message = PMessage()
-        for s in segments:
-            if s is not None and len(s) > 0:
-                tag = s.pop(0)
-                message.add_segment(PySegment(tag, *s))
-        return message
+        for s in self.segments:
+            elements = s.toList()
+            if elements is not None and len(elements) > 0:
+                tag = s.tag
+                segment = PSegment(tag, *elements)
+                message.add_segment(segment)
+        return message.serialize()
 
