@@ -71,6 +71,11 @@ class EDIParser():
     """
     def create_aperak(self, segments = None) -> [Segment]:
         aperak = UNMessage('APERAK')
+        aperak['UNB']['syntax_identifier']['syntax_identifier'] = 'UNOB'
+        aperak['UNB']['syntax_identifier']['syntax_version_number'] = '3'
+        aperak['UNB']['interchange_sender'] = ['27860','ZZZ']
+
+        aperak['UNH'][0] = '1'
         aperak['UNH'][1][0] = 'APERAK'
         aperak['UNH'][1][1] = 'D'
         aperak['UNH'][1][2] = '96A'
@@ -83,6 +88,10 @@ class EDIParser():
 
         reference_no = self.segments['BGM']['r:1004'].value
         aperak['GRP1']['RFF'][0]['r:1154'] = reference_no
+        aperak['UNT'][0] = '5' # TODO: make dynamically
+        aperak['UNT'][1] = self.segments['UNH']['r:0062']
+
+        print(aperak)
 
         return aperak
 
