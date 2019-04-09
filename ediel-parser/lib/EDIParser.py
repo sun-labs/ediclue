@@ -95,11 +95,7 @@ class EDIParser():
         
         unh = UNSegment('UNH')
         unh[0] = '1'
-        unh[1][0] = 'APERAK'
-        unh[1][1] = 'D'
-        unh[1][2] = '96A'
-        unh[1][3] = 'UN'
-        unh[1][4] = 'EDIEL2'
+        unh[1] = ['APERAK', 'D', '96A', 'UN', 'EDIEL2']
         aperak.append(unh)
 
         bgm = UNSegment('BGM')
@@ -107,17 +103,8 @@ class EDIParser():
         aperak.append(bgm)
 
         dtm = UNSegment('DTM')
-        dtm[0][0] = '137'
-        dtm[0][1] = timestamp_now
-        dtm[0][2] = '203' # CCYYMMDDHHmm
+        dtm[0] = ['137', timestamp_now, '203']
         aperak.append(dtm)
-
-        
-        dtm2 = UNSegment('DTM')
-        dtm2[0][0] = '137'
-        dtm2[0][1] = timestamp_now
-        dtm2[0][2] = '203' # CCYYMMDDHHmm
-        aperak.append(dtm2)
 
         rff = UNSegment('RFF')
         rff[0]['r:1154'] = reference_no
