@@ -227,48 +227,48 @@ definitions = {
         Segment("action_request-notification-coded", length=(0,3))
     ),
     "UNB": Segment(tag="UNB").structure(
-        Segment("syntax_identifier", min=1, max=1, mandatory=True).structure(
-            Segment("syntax_identifier", length=(4,4), mandatory=True),
-            Segment("syntax_version_number", length=(1,1), mandatory=True),
+        Segment("syntax_identifier", min=1, max=1, mandatory=True, ref='S001').structure(
+            Segment("syntax_identifier", length=(4,4), mandatory=True, ref='0001'),
+            Segment("syntax_version_number", length=(1,1), mandatory=True, ref='0002'),
         ),
-        Segment("interchange_sender", min=1, max=1, mandatory=True).structure(
-            Segment("sender_identification", mandatory=True, length=(0,35)),
-            Segment("partner_identification_code_qualifier", length=(0,4)),
-            Segment("address_for_reverse_routing", length=(0,14))
+        Segment("interchange_sender", min=1, max=1, mandatory=True, ref='S002').structure(
+            Segment("sender_identification", mandatory=True, length=(0,35), ref='0004'),
+            Segment("partner_identification_code_qualifier", length=(0,4), ref='0007'),
+            Segment("address_for_reverse_routing", length=(0,14), ref='0008')
         ),
-        Segment("interchange_recipient", min=1, max=1, mandatory=True).structure(
-            Segment("recipient_identification", length=(0,35), mandatory=True),
-            Segment("partner_identification_code_qualifier", length=(0,4)),
-            Segment("routing_address", length=(0,14)),
+        Segment("interchange_recipient", min=1, max=1, mandatory=True, ref='S003').structure(
+            Segment("recipient_identification", length=(0,35), mandatory=True, ref='0010'),
+            Segment("partner_identification_code_qualifier", length=(0,4), ref='0007'),
+            Segment("routing_address", length=(0,14), ref='0014'),
         ),
-        Segment("date-time_of_preparation", min=1, max=1, mandatory=True).structure(
-            Segment("date_of_preparation", length=(6,6), mandatory=True),
-            Segment("time_of_preparation", length=(4,4), mandatory=True),
+        Segment("date-time_of_preparation", min=1, max=1, mandatory=True, ref='S004').structure(
+            Segment("date_of_preparation", length=(6,6), mandatory=True, ref='0017'),
+            Segment("time_of_preparation", length=(4,4), mandatory=True, ref='0019'),
         ),
-        Segment("interchange_control_reference", length=(0,14), mandatory=True),
-        Segment("recipients_reference-password", min=0, max=1).structure(
-            Segment("recipients_reference-password", length=(0,14), mandatory=True),
-            Segment("recipients_reference-password_qualifier", length=(2,2))
+        Segment("interchange_control_reference", length=(0,14), mandatory=True, ref='0020'),
+        Segment("recipients_reference-password", min=0, max=1, ref='S005').structure(
+            Segment("recipients_reference-password", length=(0,14), mandatory=True, ref='0022'),
+            Segment("recipients_reference-password_qualifier", length=(2,2), ref='0025')
         ),
-        Segment("application_reference", length=(0,14)),
-        Segment("processing_priority_code", length=(1,1)),
-        Segment("acknowledgement_request", length=(1,1)),
-        Segment("communications_agreement_id", length=(0,35)),
-        Segment("test_indicator", length=(1,1))
+        Segment("application_reference", length=(0,14), ref='0026'),
+        Segment("processing_priority_code", length=(1,1), ref='0029'),
+        Segment("acknowledgement_request", length=(1,1), ref='0031'),
+        Segment("communications_agreement_id", length=(0,35), ref='0032'),
+        Segment("test_indicator", length=(1,1), ref='0035')
     ),
     "UNH": Segment(tag="UNH").structure(
-        Segment("message_reference_number", length=(0,14), mandatory=True),
-        Segment("message_identifier", mandatory=True).structure(
-            Segment("message_type_identifier", length=(0,6), mandatory=True),
-            Segment("message_type_version_number", length=(0,3), mandatory=True),
-            Segment("message_type_release_number", length=(0,3), mandatory=True),
-            Segment("controlling_agency", length=(0,2), mandatory=True),
-            Segment("association_assigned_code", length=(0,6))
+        Segment("message_reference_number", length=(0,14), mandatory=True, ref='0062'),
+        Segment("message_identifier", mandatory=True, ref='S009').structure(
+            Segment("message_type_identifier", length=(0,6), mandatory=True, ref='0065'),
+            Segment("message_type_version_number", length=(0,3), mandatory=True, ref='0052'),
+            Segment("message_type_release_number", length=(0,3), mandatory=True, ref='0054'),
+            Segment("controlling_agency", length=(0,2), mandatory=True, ref='0051'),
+            Segment("association_assigned_code", length=(0,6), ref='0057')
         ),
-        Segment("common_access_reference", length=(0,35)),
-        Segment("status_of_the_transfer").structure(
-            Segment("sequence_message_transfer_number", length=(0,2), mandatory=True),
-            Segment("first-last_sequence_message_transfer_indication", length=(1,1))
+        Segment("common_access_reference", length=(0,35), ref='0068'),
+        Segment("status_of_the_transfer", ref='S010').structure(
+            Segment("sequence_message_transfer_number", length=(0,2), mandatory=True, ref='0070'),
+            Segment("first-last_sequence_message_transfer_indication", length=(1,1), ref='0073')
         )
     ),
     "UNT": Segment(tag="UNT").structure(
@@ -276,8 +276,8 @@ definitions = {
         Segment("message_reference_number", length=(0,14), mandatory=True)
     ),
     "UNZ": Segment(tag="UNZ").structure(
-        Segment("interchange_control_count", length=(0,6), mandatory=True),
-        Segment("interchange_control_reference", length=(0,14), mandatory=True),
+        Segment("interchange_control_count", length=(0,6), mandatory=True, ref='0036'),
+        Segment("interchange_control_reference", length=(0,14), mandatory=True, ref='0020'),
     ),
     "CNT": Segment(tag="CNT").structure(
         Segment("control", max=1, min=1, mandatory=True).structure(
