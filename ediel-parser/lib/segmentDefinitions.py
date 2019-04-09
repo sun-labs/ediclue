@@ -303,5 +303,22 @@ definitions = {
             Segment("code_list_qualifier", length=(0,3), ref='1131'),
             Segment("code_list_responsible_agency-coded", length=(0,3), ref='3055')
         )
+    ),
+    "FTX": Segment(tag="FTX").structure(
+        Segment("text_subject_qualifier", mandatory=True, ref='4451'),
+        Segment("text_function-coded", ref='4453'),
+        Segment("text_reference", ref='C107').structure(
+            Segment("free_text-coded", mandatory=True, ref='4441'),
+            Segment("code_list_qualifier", ref='1131'),
+            Segment("code_list_responsible_agency-coded", length=(0,3), ref='3055')
+        ),
+        Segment("text_literal", ref='C108').structure(
+            Segment("free_text", mandatory=True, ref='4440'),
+            Segment("free_text_2", ref='4440'),
+            Segment("free_text_3", ref='4440'),
+            Segment("free_text_4", ref='4440'),
+            Segment("free_text_5", ref='4440'),
+        ),
+        Segment("language-coded", ref='3453')
     )
 }
