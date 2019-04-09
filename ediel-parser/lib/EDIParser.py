@@ -107,14 +107,22 @@ class EDIParser():
     """
     EDI string out of payload segments
     """
-    def toEdi(self, segments = None) -> str:
+    def toEdi(self, segments=None) -> str:
         segments = self.segments if segments is None else segments
         message = PMessage()
+        return self._toEdi(segments, message)
+
+    def _toEdi(self, segments = None, message = None) -> str:
         for s in segments:
-            elements = s.toList()
-            if elements is not None and len(elements) > 0:
-                tag = s.tag
-                segment = PSegment(tag, *elements)
-                message.add_segment(segment)
+            if s.group is True:
+                self._toEdi(s, message)
+            else:
+                elements = s.toList()
+                if elements is not None and len(elements) > 0:
+                    tag = s.tag
+                    segment = PSegment(tag, *elements)
+                    message.add_segment(segment)
         return message.serialize()
+
+    
 
