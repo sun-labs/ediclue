@@ -10,23 +10,24 @@ if __name__ == '__main__':
     parser.add_argument('--input', type=argparse.FileType('r'), default=sys.stdin)
     parser.add_argument('--output', type=argparse.FileType('w'), default=sys.stdout)
 
-    parser.add_argument('--from', choices=['edi'], default='edi'),
-    parser.add_argument('--to', choices=['json', 'raw', 'json-arr', 'edi'], default='json')
+    parser.add_argument('--from', dest='from_type', choices=['edi', 'json'], default='edi'),
+    parser.add_argument('--to', dest='to_type', choices=['json', 'raw', 'json-arr', 'edi'], default='json')
 
     parser.add_argument('--aperak', action='store_true')
 
     args = parser.parse_args()
 
     payload = args.input.read()
-    parser = EDIParser(payload)
+    parser = EDIParser(payload, format=args.from_type)
 
-    if args.to == 'json':
+    to_type = args.to_type
+    if to_type == 'json':
         result = json.dumps(parser.toDict())
-    elif args.to == 'json-arr':
+    elif to_type == 'json-arr':
         result = json.dumps(parser.toList())
-    elif args.to == 'raw':
+    elif to_type == 'raw':
         result = payload
-    elif args.to == 'edi':
+    elif to_type == 'edi':
         result = parser.toEdi()
 
     if args.aperak is True:
