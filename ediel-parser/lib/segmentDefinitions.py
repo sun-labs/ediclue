@@ -89,29 +89,29 @@ definitions = {
         Segment("surface-layer_indicator-coded", length=(0,3))
     ),
     "IDE": Segment(tag="IDE").structure(
-        Segment("identification_qualifier", length=(0,3), mandatory=True),
-        Segment("identification_number", min=1, max=1, mandatory=True).structure(
-            Segment("identity_number", length=(0,35)),
-            Segment("identity_number_qualifier", length=(0,3)),
-            Segment("status-coded", length=(0,3)),
+        Segment("identification_qualifier", length=(0,3), mandatory=True, ref='7495'),
+        Segment("identification_number", min=1, max=1, mandatory=True, ref='C206').structure(
+            Segment("identity_number", length=(0,35), mandatory=True, ref='7402'),
+            Segment("identity_number_qualifier", length=(0,3), ref='7405'),
+            Segment("status-coded", length=(0,3), ref='4405'),
         ),
-        Segment("party_identification_details", min=0, max=1).structure(
-            Segment("party_id_identification", length=(0,35), mandatory=True),
-            Segment("code_list_qualifier", length=(0,3)),
-            Segment("code_list_responsible_agency-coded", length=(0,3)),
+        Segment("party_identification_details", min=0, max=1, ref='C082').structure(
+            Segment("party_id_identification", length=(0,35), mandatory=True, ref='3039'),
+            Segment("code_list_qualifier", length=(0,3), ref='1131'),
+            Segment("code_list_responsible_agency-coded", length=(0,3), ref='3055'),
         ),
-        Segment("status-coded", length=(0,3)),
-        Segment("configuration_level", length=(0,2)),
-        Segment("position_identification", min=0, max=1).structure(
-            Segment("hierarchical_id_number", length=(0,12)),
-            Segment("sequence_number", length=(0,6))
+        Segment("status-coded", length=(0,3), ref='4405'),
+        Segment("configuration_level", length=(0,2), ref='1222'),
+        Segment("position_identification", min=0, max=1, ref='C778').structure(
+            Segment("hierarchical_id_number", length=(0,12), ref='7164'),
+            Segment("sequence_number", length=(0,6), ref='1050')
         ),
-        Segment("product_characteristic", min=0, max=1).structure(
-            Segment("characteristic_identification", length=(0,17), mandatory=True),
-            Segment("code_list_qualifier", length=(0,3)),
-            Segment("code_list_responsible_agency-coded", length=(0,3)),
-            Segment("characteristic", length=(0,35)),
-            Segment("characteristic", length=(0,35))
+        Segment("product_characteristic", min=0, max=1, ref='C240').structure(
+            Segment("characteristic_identification", length=(0,17), mandatory=True, ref='7037'),
+            Segment("code_list_qualifier", length=(0,3), ref='1131'),
+            Segment("code_list_responsible_agency-coded", length=(0,3), ref='3055'),
+            Segment("characteristic_1", length=(0,35), ref='7036'),
+            Segment("characteristic_2", length=(0,35), ref='7036')
         )
     ),
     "CCI": Segment(tag="CCI").structure(
