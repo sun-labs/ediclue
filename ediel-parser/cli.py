@@ -20,19 +20,19 @@ if __name__ == '__main__':
     payload = args.input.read()
     parser = EDIParser(payload, format=args.from_type)
 
+    work_result = None
+    if args.aperak is True:
+        work_result = parser.create_aperak()
+
     to_type = args.to_type
     if to_type == 'json':
-        result = json.dumps(parser.toDict())
+        result = json.dumps(parser.toDict(work_result))
     elif to_type == 'json-arr':
-        result = json.dumps(parser.toList())
+        result = json.dumps(parser.toList(work_result))
+    elif to_type == 'edi':
+        result = parser.toEdi(work_result)
     elif to_type == 'raw':
         result = payload
-    elif to_type == 'edi':
-        result = parser.toEdi()
-
-    if args.aperak is True:
-        aperak = parser.create_aperak()
-        print(aperak)
 
     print(result)
     
