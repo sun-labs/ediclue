@@ -74,6 +74,7 @@ class EDIParser():
         RECIPIENT_EDIEL_ID = self.segments['UNB']['interchange_sender'][0].value
         partner_identification_code_qualifier = self.segments['UNB']['interchange_sender']['partner_identification_code_qualifier'].value
         timestamp_now = edi.format_timestamp(datetime.now())
+        reference_no = self.segments['BGM']['r:1004'].value
 
         aperak = UNMessage('APERAK')
         aperak['UNB']['syntax_identifier']['syntax_identifier'] = 'UNOB'
@@ -81,6 +82,7 @@ class EDIParser():
         aperak['UNB']['interchange_sender'] = [OUR_EDIEL_ID, partner_identification_code_qualifier]
         aperak['UNB']['interchange_recipient'] = [RECIPIENT_EDIEL_ID, partner_identification_code_qualifier]
         aperak['UNB']['date-time_of_preparation'] = [timestamp_now[:8], timestamp_now[8:]]
+        # aperak['UNB']['interchange_control_reference'] = 
 
         aperak['UNH'][0] = '1'
         aperak['UNH'][1][0] = 'APERAK'
@@ -93,7 +95,6 @@ class EDIParser():
         aperak['DTM'][0][1] = timestamp_now
         aperak['DTM'][0][2] = '203' # CCYYMMDDHHmm
 
-        reference_no = self.segments['BGM']['r:1004'].value
         aperak['GRP1']['RFF'][0]['r:1154'] = reference_no
         aperak['UNT'][0] = '5' # TODO: make dynamically
         aperak['UNT'][1] = self.segments['UNH']['r:0062']
