@@ -207,15 +207,15 @@ definitions = {
         Segment("county-coded", length=(0,3))
     ),
     "BGM": Segment(tag="BGM").structure(
-        Segment("document-message_name", min=0, max=1).structure(
-            Segment("document-message_name-coded", length=(0,3)),
-            Segment("code_list_qualifier", length=(0,3)),
-            Segment("code_list_responsible_agency-coded", length=(0,3)),
-            Segment("document-message_name", length=(0,35)),
+        Segment("document-message_name", min=0, max=1, ref='C002').structure(
+            Segment("document-message_name-coded", length=(0,3), ref='1001'),
+            Segment("code_list_qualifier", length=(0,3), ref='1131'),
+            Segment("code_list_responsible_agency-coded", length=(0,3), ref='3055'),
+            Segment("document-message_name", length=(0,35), ref='1000'),
         ),
-        Segment("document-message_number", length=(0,35)),
-        Segment("message_function-coded", length=(0,3)),
-        Segment("response_type-coded", length=(0,3))
+        Segment("document-message_number", length=(0,35), ref='1004'),
+        Segment("message_function-coded", length=(0,3), ref='1225'),
+        Segment("response_type-coded", length=(0,3), ref='4343')
     ),
     "MKS": Segment(tag="MKS").structure(
         Segment("sector-subject_identification_qualifier", length=(0,3), mandatory=True),

@@ -1,6 +1,6 @@
 class Segment():
 
-    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], value=None):
+    def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], value=None, ref=None):
         self.id = tag or id
         self.tag = tag
         self.length = length
@@ -9,12 +9,15 @@ class Segment():
         self.mandatory = mandatory
         self.children = children
         self.value = value
+        self.ref = ref
 
     def __getitem__(self, key):
         if type(key) is str:
             for child in self.children:
-                if child.id == key or child.tag == key: 
-                    return child
+                if 'r:' in key:
+                    if child.ref == key: return child
+                else:
+                    if child.id == key or child.tag == key: return child
         if type(key) is int:
             return self.children[key]
         raise IndexError(key + ' does not exist')
