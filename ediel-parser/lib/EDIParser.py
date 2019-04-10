@@ -76,8 +76,13 @@ class EDIParser():
         segments = self.segments if segments is None else segments
 
         UNIQUE_ID = '1333333777'
+        APERAK_PREFIX = 'SLAPE'
+        APERAK_START_ID = 1337
         OUR_EDIEL_ID = '27860'
         RECIPIENT_EDIEL_ID = self.segments['UNB']['interchange_sender'][0].value
+
+        aperak_cnt = 0
+
         partner_identification_code_qualifier = segments['UNB']['interchange_sender']['partner_identification_code_qualifier'].value
         timestamp_now = edi.format_timestamp(datetime.now())
         reference_no = segments['BGM']['r:1004'].value
@@ -123,9 +128,45 @@ class EDIParser():
         doc[1] = [doc_message_number]
         aperak.append(doc)
 
-        rff = UNSegment('RFF')
-        rff[0]['r:1154'] = reference_no
-        aperak.append(rff)
+        nad1 = UNSegment('NAD')
+        nad1[0] = 'MS' # message sender
+        nad1[1] = [OUR_EDIEL_ID, 'SVK', '260']
+        nad1['r:3164'] = 'UPPSALA'
+        nad1['r:3207'] = 'SE'
+        aperak.append(nad1)
+
+        nad2 = UNSegment('NAD')
+        nad2[0] = 'MR' # message receiver
+        nad2[1] = [RECIPIENT_EDIEL_ID, 'SVK', '260']
+        aperak.append(nad2)
+
+        nad3 = UNSegment('NAD')
+        nad3[0] = 'DDQ'
+        aperak.append(nad3)
+
+        # init loop of transaction
+        for s in segments:
+            if s.tag == 'IDE': # transaction
+                transaction_id = s['identification_number']['identity_number'].value
+
+                erc = UNSegment('ERC') # godkänt
+                erc[0] = ['100', None, '260']
+                aperak.append(erc)
+                
+                ftx = UNSegment('FTX') # godkänt
+                ftx[0] = 'AAO'
+                ftx[3] = 'OK'
+                aperak.append(ftx)
+
+                aperak_id = str(APERAK_START_ID + aperak_cnt)
+                aperak_cnt += 1
+                rff = UNSegment('RFF')
+                rff[0] = ['DM', aperak_id]
+                aperak.append(rff)
+
+                rff2 = UNSegment('RFF')
+                rff2[0] = ['ACW', transaction_id] # refererar till transaktionen som godkäns
+                aperak.append(rff2)
 
         unt = UNSegment('UNT')
         unt[0] = str(reduce(lambda acc, s: acc + 1, aperak, 0) - 2)
@@ -135,11 +176,6 @@ class EDIParser():
         unz = UNSegment('UNZ')
         unz[0] = '1'
         unz[1] = UNIQUE_ID
-
-        return aperak
-
-
-        #print(aperak)
 
         return aperak
 
