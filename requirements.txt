@@ -1,1 +1,1 @@
-git+https://github.com/nerdocs/pydifact.git#egg=pydifact&subdirectory=src
+git+https://github.com/sun-labs/pydifact.git#egg=pydifact&subdirectory=src
