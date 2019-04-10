@@ -54,7 +54,8 @@ class Segment():
         raise IndexError('{} does not exist'.format(key))
 
     def __str__(self):
-        message = self.toDict().__str__()
+        message = "[{}] ".format(self.id) 
+        message += self.toDict().__str__()
         return message
 
     def __len__(self):
