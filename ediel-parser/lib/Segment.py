@@ -133,12 +133,11 @@ class Segment():
             for i in range(0, n_children):
                 cur = children[i]
                 value = self._toList(segment=cur)
-                if value is not None:
-                    result.append(value)
+                result.append(value)
         else:
-            if segment.value is not None:
-                result = segment.value 
-        return result if len(result) > 0 else None
+            value = segment.value
+            return value
+        return result
 
     """
     Create dictionary of segments with explanatory keys
