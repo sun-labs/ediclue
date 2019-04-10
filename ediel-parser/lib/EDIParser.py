@@ -176,7 +176,8 @@ class EDIParser():
         unz = UNSegment('UNZ')
         unz[0] = '1'
         unz[1] = UNIQUE_ID
-
+        aperak.append(unz)
+        
         return aperak
 
     """
