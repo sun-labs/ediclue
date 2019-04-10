@@ -174,37 +174,37 @@ definitions = {
         ),
     ),
     "NAD": Segment(tag="NAD").structure(
-        Segment("party_qualifier", length=(0,3), mandatory=True),
-        Segment("party_identification_details", min=0, max=1).structure(
-            Segment("party_id_identification", length=(0,35)),
-            Segment("code_list_qualifier", length=(0,3)),
-            Segment("code_list_responsible_agency-coded", length=(0,3)),
+        Segment("party_qualifier", length=(0,3), mandatory=True, ref='3035'),
+        Segment("party_identification_details", min=0, max=1, ref='C082').structure(
+            Segment("party_id_identification", length=(0,35), ref='3039'),
+            Segment("code_list_qualifier", length=(0,3), ref='1131'),
+            Segment("code_list_responsible_agency-coded", length=(0,3), ref='3055'),
         ),
-        Segment("name_and_address", min=0, max=1).structure(
-            Segment("name_and_address_line_1", length=(0,35), mandatory=True),
-            Segment("name_and_address_line_2", length=(0,35)),
-            Segment("name_and_address_line_3", length=(0,35)),
-            Segment("name_and_address_line_4", length=(0,35)),
-            Segment("name_and_address_line_5", length=(0,35)),
+        Segment("name_and_address", min=0, max=1, ref='C058').structure(
+            Segment("name_and_address_line_1", length=(0,35), mandatory=True, ref='3124'),
+            Segment("name_and_address_line_2", length=(0,35), ref='3124'),
+            Segment("name_and_address_line_3", length=(0,35), ref='3124'),
+            Segment("name_and_address_line_4", length=(0,35), ref='3124'),
+            Segment("name_and_address_line_5", length=(0,35), ref='3124'),
         ),
-        Segment("party_name", min=0, max=1).structure(
-            Segment("party_name_1", length=(0,35), mandatory=True),
-            Segment("party_name_2", length=(0,35)),
-            Segment("party_name_3", length=(0,35)),
-            Segment("party_name_4", length=(0,35)),
-            Segment("party_name_5", length=(0,35)),
-            Segment("party_name_format-coded", length=(0,3)),
+        Segment("party_name", min=0, max=1, ref='C080').structure(
+            Segment("party_name_1", length=(0,35), mandatory=True, ref='3036'),
+            Segment("party_name_2", length=(0,35), ref='3036'),
+            Segment("party_name_3", length=(0,35), ref='3036'),
+            Segment("party_name_4", length=(0,35), ref='3036'),
+            Segment("party_name_5", length=(0,35), ref='3036'),
+            Segment("party_name_format-coded", length=(0,3), ref='3045'),
         ),
-        Segment("street", min=0, max=1).structure(
-            Segment("street_and_number-po_box_1", length=(0,35), mandatory=True),
-            Segment("street_and_number-po_box_2", length=(0,35)),
-            Segment("street_and_number-po_box_3", length=(0,35)),
-            Segment("street_and_number-po_box_4", length=(0,35)),
+        Segment("street", min=0, max=1, ref='C059').structure(
+            Segment("street_and_number-po_box_1", length=(0,35), mandatory=True, ref='3042'),
+            Segment("street_and_number-po_box_2", length=(0,35), ref='3042'),
+            Segment("street_and_number-po_box_3", length=(0,35), ref='3042'),
+            Segment("street_and_number-po_box_4", length=(0,35), ref='3042'),
         ),
-        Segment("city_name", length=(0,35)),
-        Segment("count_sub_entity_identification", length=(0,9)),
-        Segment("postcode_identification", length=(0,9)),
-        Segment("county-coded", length=(0,3))
+        Segment("city_name", length=(0,35), ref='3164'),
+        Segment("count_sub_entity_identification", length=(0,9), ref='3229'),
+        Segment("postcode_identification", length=(0,9), ref='3251'),
+        Segment("county-coded", length=(0,3), ref='3207')
     ),
     "BGM": Segment(tag="BGM").structure(
         Segment("document-message_name", min=0, max=1, ref='C002').structure(
