@@ -12,22 +12,28 @@ def recurse(func, segments):
 
 def rstrip(segments: [Segment]):
     new_segments = []
-    for segment in segments:
-        end_index, new_segment = _rstrip(segment)
-        new_segments.append(new_segment)
+    for message in segments:
+        new_segments.append(_rstrip(message))
     return new_segments
 
 def _rstrip(segment: Segment):
-    new_children = []
+    decrement_val = 1
     end_index = len(segment)
-    for child in reversed(segment):
-        if len(child) > 0:
-            end_index, new_segment = _rstrip(child)
-            new_children.append(new_segment.children[:end_index]) # skip null children
+    for i, seg in enumerate(reversed(segment)):
+        if len(seg) > 0:
+            stripped = _rstrip(seg)
+            # print(i, 'len', len(seg), seg.id, segment.children[i].id, stripped.id)
+            segment.children[i] = stripped
+            if len(stripped) == 0:
+                end_index -= decrement_val
+            else:
+                decrement_val = 0 # stop decrementing as there's a value
         else:
-            if child.value is None:
-                end_index -= 1
+            if seg.value is None:
+                end_index -= decrement_val
                 continue
-            break
-    segment.children = new_children
-    return end_index, segment
+            decrement_val = 0 # stop decrementing, but keep on cleaning rest
+    # print(list(map(lambda x: ('old', x.id, x.value), segment.children)))
+    segment.children = segment.children[:end_index]
+    # print(list(map(lambda x: (x.id, x.value), segment.children)))
+    return segment

@@ -178,7 +178,7 @@ class EDIParser():
         unz[1] = UNIQUE_ID
         aperak.append(unz)
         
-        return aperak
+        return edi.rstrip(aperak)
 
     """
     Dictionary out of payload segments
@@ -204,7 +204,8 @@ class EDIParser():
     def toEdi(self, segments=None) -> str:
         segments = self.segments if segments is None else segments
         message = PMessage()
-        return self._toEdi(segments, message)
+        result = self._toEdi(segments, message)
+        return result
 
     def _toEdi(self, segments = None, message = None) -> str:
         for s in segments:
