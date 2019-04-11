@@ -185,6 +185,7 @@ class EDIParser():
     """
     def toDict(self, segments = None) -> list:
         segments = self.segments if segments is None else segments
+        segments = edi.rstrip(segments)
         raw_result = map(lambda s: s.toDict(), segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
@@ -194,6 +195,7 @@ class EDIParser():
     """
     def toList(self, segments = None) -> list:
         segments = self.segments if segments is None else segments
+        segments = edi.rstrip(segments)
         raw_result = map(lambda s: [s.tag, s.toList()], segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
