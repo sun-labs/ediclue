@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 from functools import reduce
+from hashlib import md5
+import time
 
 from pydifact.message import Message as PMessage
 from pydifact.segments import Segment as PSegment
@@ -74,7 +76,11 @@ class EDIParser():
 
         segments = self.segments if segments is None else segments
 
-        UNIQUE_ID = '1333333777'
+        unix_timestamp = time.time()
+        segment_hash = segments.__str__()
+        hash_string = '{}:{}'.format(segment_hash, unix_timestamp).encode('utf-8')
+        UNIQUE_ID = str(md5(hash_string).hexdigest())[:14]
+
         APERAK_PREFIX = 'SLAPE'
         APERAK_START_ID = 1337
         OUR_EDIEL_ID = '27860'
@@ -82,8 +88,8 @@ class EDIParser():
 
         aperak_cnt = 0
 
-        partner_identification_code_qualifier = segments['UNB']['interchange_sender']['partner_identification_code_qualifier'].value
         timestamp_now = edi.format_timestamp(datetime.now())
+        partner_identification_code_qualifier = segments['UNB']['interchange_sender']['partner_identification_code_qualifier'].value
         reference_no = segments['BGM']['r:1004'].value
 
         doc_name = segments['BGM']['document-message_name']
@@ -121,6 +127,11 @@ class EDIParser():
         timezone = UNSegment('DTM')
         timezone[0] = ['735', '+0100', '406']
         aperak.append(timezone)
+
+        ftx_uts = UNSegment('FTX') # unix timestamp sparad
+        ftx_uts[0] = 'ZZZ'
+        ftx_uts[3] = str(unix_timestamp)
+        aperak.append(ftx_uts)
 
         doc = UNSegment('DOC')
         doc[0] = [doc_message_name_code, '', doc_responsible_agency]
