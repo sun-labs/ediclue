@@ -7,7 +7,6 @@ from pydifact.segments import Segment as PSegment
 
 from lib.Segment import Segment, Group
 from lib.UNSegment import UNSegment
-from lib.UNMessage import UNMessage
 import lib.ediTools as edi
 
 class EDIParser():
