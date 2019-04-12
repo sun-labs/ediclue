@@ -18,20 +18,35 @@ if __name__ == '__main__':
     pp.add_argument('--aperak', action='store_true')
 
     ip = parser.add_argument_group('imap')
-    ip.add_argument('--username')
-    ip.add_argument('--password')
-    ip.add_argument('--server')
+    ip.add_argument('--imusername', dest='imap_username')
+    ip.add_argument('--impassword', dest='imap_password')
+    ip.add_argument('--imserver', dest='imap_server')
     ip.add_argument('--output-directory')
+
+    sp = parser.add_argument_group('smtp')
+    sp.add_argument('--smusername', dest='smtp_username')
+    sp.add_argument('--smpassword', dest='smtp_password')
+    sp.add_argument('--smserver', dest='smtp_server')
+    sp.add_argument('--input-directory')
 
     args = parser.parse_args()
 
-    if args.username is not None and args.password is not None and args.server is not None:
-        m = imap.connect(args.server, args.username, args.password)
+    if args.imap_username is not None and args.imap_password is not None and args.imap_server is not None:
+        m = imap.connect(args.imap_server, args.imap_username, args.imap_password)
         output_dir = args.output_directory
         if output_dir is not None:
             print("Downloading attachments to {}".format(output_dir))
             imap.downloadAllAttachmentsInInbox(m, output_dir)
         exit(0)
+
+    if args.smtp_username is not None and args.smtp_password is not None and args.smtp_server is not None:
+        m = imap.connect(args.smtp_server, args.smtp_username, args.smtp_password)
+        input_dir = args.input_directory
+        if input_dir is not None:
+            print("Reading attachments in {}".format(input_dir))
+            imap.downloadAllAttachmentsInInbox(m, input_dir)
+        exit(0)
+    
 
     payload = args.input.read()
     parser = EDIParser(payload, format=args.from_type)
