@@ -106,43 +106,50 @@ class EDIParser():
         unb['syntax_identifier']['syntax_version_number'] = '3'
         unb['interchange_sender'] = [OUR_EDIEL_ID, partner_identification_code_qualifier]
         unb['interchange_recipient'] = [RECIPIENT_EDIEL_ID, partner_identification_code_qualifier]
-        unb['date-time_of_preparation'] = [timestamp_now[:8], timestamp_now[8:]]
+        unb['date-time_of_preparation'] = [timestamp_now[2:8], timestamp_now[8:]]
         unb['interchange_control_reference'] = UNIQUE_ID
         unb['application_reference'] = application_reference
         aperak.append(unb)
         
         unh = UNSegment('UNH')
-        unh[0] = '1'
+        unh['r:0062'] = UNIQUE_ID # UNIQUE_ID
         unh[1] = ['APERAK', 'D', '96A', 'UN', 'EDIEL2']
         aperak.append(unh)
 
         bgm = UNSegment('BGM')
-        bgm[3] = '27'
+        bgm['response_type-coded'] = '29'
         aperak.append(bgm)
 
         dtm = UNSegment('DTM')
         dtm[0] = ['137', timestamp_now, '203']
         aperak.append(dtm)
 
-        timezone = UNSegment('DTM')
-        timezone[0] = ['735', '+0100', '406']
-        aperak.append(timezone)
+        # timezone = UNSegment('DTM')
+        # timezone[0] = ['735', '+0100', '406']
+        # aperak.append(timezone)
 
         ftx_uts = UNSegment('FTX') # unix timestamp sparad
         ftx_uts[0] = 'ZZZ'
-        ftx_uts[3] = str(unix_timestamp)
+        ftx_uts[3] = 'hello' # str(unix_timestamp)
         aperak.append(ftx_uts)
 
-        doc = UNSegment('DOC')
-        doc[0] = [doc_message_name_code, '', doc_responsible_agency]
-        doc[1] = [doc_message_number]
-        aperak.append(doc)
+        # doc = UNSegment('DOC')
+        # doc[0] = [doc_message_name_code, '', doc_responsible_agency]
+        # doc[1] = [doc_message_number]
+        # print(doc)
+        # aperak.append(doc)
 
+        # group1
+        rff =  UNSegment('RFF')
+        rff[0] = ['ACW', doc_message_number]
+        aperak.append(rff)
+
+        # group 2
         nad1 = UNSegment('NAD')
-        nad1[0] = 'MS' # message sender
-        nad1[1] = [OUR_EDIEL_ID, 'SVK', '260']
-        nad1['r:3164'] = 'UPPSALA'
-        nad1['r:3207'] = 'SE'
+        nad1['party_qualifier'] = 'MS' # message sender
+        nad1['party_identification_details'] = [OUR_EDIEL_ID, 'SVK', '260']
+        nad1['city_name'] = 'UPPSALA'
+        nad1['country-coded'] = 'SE'
         aperak.append(nad1)
 
         nad2 = UNSegment('NAD')
@@ -150,37 +157,38 @@ class EDIParser():
         nad2[1] = [RECIPIENT_EDIEL_ID, 'SVK', '260']
         aperak.append(nad2)
 
-        nad3 = UNSegment('NAD')
-        nad3[0] = 'DDQ'
-        aperak.append(nad3)
+        # nad3 = UNSegment('NAD')
+        # nad3[0] = 'DDQ'
+        # aperak.append(nad3)
 
         # init loop of transaction
-        for s in segments:
-            if s.tag == 'IDE': # transaction
-                transaction_id = s['identification_number']['identity_number'].value
+        # for s in segments:
+        #     if s.tag == 'IDE': # transaction
+        #         transaction_id = s['identification_number']['identity_number'].value
 
-                erc = UNSegment('ERC') # godkänt
-                erc[0] = ['100', None, '260']
-                aperak.append(erc)
+        #         # group 3
+        #         erc = UNSegment('ERC') # godkänt
+        #         erc[0] = ['100', None, '260']
+        #         aperak.append(erc)
                 
-                ftx = UNSegment('FTX') # godkänt
-                ftx[0] = 'AAO'
-                ftx[3] = 'OK'
-                aperak.append(ftx)
+        #         ftx = UNSegment('FTX') # godkänt
+        #         ftx[0] = 'AAO'
+        #         ftx[3] = 'OK'
+        #         aperak.append(ftx)
 
-                aperak_id = str(APERAK_START_ID + aperak_cnt)
-                aperak_cnt += 1
-                rff = UNSegment('RFF')
-                rff[0] = ['DM', aperak_id]
-                aperak.append(rff)
+        #         aperak_id = str(APERAK_START_ID + aperak_cnt)
+        #         aperak_cnt += 1
+        #         rff = UNSegment('RFF')
+        #         rff[0] = ['DM', aperak_id]
+        #         aperak.append(rff)
 
-                rff2 = UNSegment('RFF')
-                rff2[0] = ['ACW', transaction_id] # refererar till transaktionen som godkäns
-                aperak.append(rff2)
+        #         rff2 = UNSegment('RFF')
+        #         rff2[0] = ['ACW', transaction_id] # refererar till transaktionen som godkäns
+        #         aperak.append(rff2)
 
         unt = UNSegment('UNT')
-        unt[0] = str(reduce(lambda acc, s: acc + 1, aperak, 0) - 2)
-        unt[1] = segments['UNH']['r:0062'].value
+        unt[0] = str(reduce(lambda acc, s: acc + 1, aperak, 0) - 1)
+        unt[1] = UNIQUE_ID # segments['UNH']['r:0062'].value
         aperak.append(unt)
 
         unz = UNSegment('UNZ')
@@ -195,7 +203,7 @@ class EDIParser():
     """
     def toDict(self, segments = None) -> list:
         segments = self.segments if segments is None else segments
-        segments = edi.rstrip(segments)
+        # segments = edi.rstrip(segments)
         raw_result = map(lambda s: s.toDict(), segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
@@ -205,7 +213,7 @@ class EDIParser():
     """
     def toList(self, segments = None) -> list:
         segments = self.segments if segments is None else segments
-        segments = edi.rstrip(segments)
+        # segments = edi.rstrip(segments)
         raw_result = map(lambda s: [s.tag, s.toList()], segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
