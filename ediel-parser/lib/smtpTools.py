@@ -6,24 +6,7 @@ from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 from email import encoders
 
-
-def send_mail(send_from, send_to, subject, message, files=[],
-              server="localhost", port=587, username='', password='',
-              use_tls=True):
-    """Compose and send email with provided info and attachments.
-
-    Args:
-        send_from (str): from name
-        send_to (str): to name
-        subject (str): message title
-        message (str): message body
-        files (list[str]): list of file paths to be attached to email
-        server (str): mail server host name
-        port (int): port number
-        username (str): server auth username
-        password (str): server auth password
-        use_tls (bool): use TLS mode
-    """
+def create_mail(send_from, send_to, subject, message, files=[]):
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = COMMASPACE.join(send_to)
@@ -41,9 +24,18 @@ def send_mail(send_from, send_to, subject, message, files=[],
                         'attachment; filename="{}"'.format(op.basename(path)))
         msg.attach(part)
 
+    return msg
+
+def send_mail(mail, server="localhost", port=587, username='', password='', use_tls=True):
+    msg = mail
     smtp = smtplib.SMTP(server, port)
     if use_tls:
         smtp.starttls()
     smtp.login(username, password)
-    smtp.sendmail(send_from, send_to, msg.as_string())
+    smtp.sendmail(msg['From'], msg['To'], msg.as_string())
     smtp.quit()
+
+def send_mail_dir(username, password, server, input_dir):
+    mail = create_mail(username, ['viregistermail@gmail.com'], 'Hello world', 'test message from myself.', files=['/Users/victoringman/edi-messages/se.el@edilink.eu/1-0-EdilinkServices.edi'])
+    send_mail(mail, server=server, username=username, password=password)
+    print('sent')

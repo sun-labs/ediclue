@@ -5,6 +5,7 @@ import os
 
 from lib.EDIParser import EDIParser
 import lib.imapTools as imap
+import lib.smtpTools as smtp
 
 
 if __name__ == '__main__':
@@ -40,11 +41,10 @@ if __name__ == '__main__':
         exit(0)
 
     if args.smtp_username is not None and args.smtp_password is not None and args.smtp_server is not None:
-        m = imap.connect(args.smtp_server, args.smtp_username, args.smtp_password)
         input_dir = args.input_directory
         if input_dir is not None:
             print("Reading attachments in {}".format(input_dir))
-            imap.downloadAllAttachmentsInInbox(m, input_dir)
+            smtp.send_mail_dir(args.smtp_username, args.smtp_password, args.smtp_server, input_dir)
         exit(0)
     
 
