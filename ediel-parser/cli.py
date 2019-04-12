@@ -31,8 +31,8 @@ if __name__ == '__main__':
         result = json.dumps(parser.toList(work_result))
     elif to_type == 'edi':
         result = parser.toEdi(work_result)
+        result = result.replace("'", "'\n") # pretty print
     elif to_type == 'raw':
         result = payload
 
     print(result)
-    
