@@ -28,20 +28,37 @@ class Segment():
         if type(value) is list:
             for i in range(0, len(value)):
                 self[key][i] = value[i]
-        if type(key) is str:
-            for child in self.children:
-                if 'r:' in key:
-                    clean_key = key.replace('r:', '')
-                    if child.ref == clean_key: 
-                        child.value = value
-                        return
-                else:
-                    if child.id == key or child.tag == key: 
-                        child.value = value
-                        return
-        if type(key) is int:
-            self.children[key].value = value
             return
+        
+        ref = False
+        index = None
+
+        if type(key) is int:
+            index = key
+        if type(key) is str:
+            if 'r:' in key:
+                    key = key.replace('r:', '')
+                    ref = True
+            
+            for i, segment in enumerate(self.children):
+                found = False
+                if ref is True:
+                    if segment.ref == key:
+                        found = True
+                else:
+                    if segment.id == key or segment.tag == key:
+                        found = True
+                if found is True: 
+                    index = i
+                    break
+
+        n_children = len(self.children[index])
+        if n_children > 0:
+            self.children[index].children[0].value = value
+        else:
+            self.children[index].value = value
+        return
+
         raise IndexError(str(key) + ' does not exist')
 
     
