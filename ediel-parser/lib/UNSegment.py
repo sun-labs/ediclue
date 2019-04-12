@@ -9,4 +9,4 @@ def UNSegment(segmentId, **args):
         return Segment(tag=segmentId) # placeholder segment
     else:
         segment = deepcopy(segment)
-        return Segment.create_from(segment, **args)
+        return segment
