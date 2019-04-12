@@ -204,7 +204,7 @@ definitions = {
         Segment("city_name", length=(0,35), ref='3164'),
         Segment("count_sub_entity_identification", length=(0,9), ref='3229'),
         Segment("postcode_identification", length=(0,9), ref='3251'),
-        Segment("county-coded", length=(0,3), ref='3207')
+        Segment("country-coded", length=(0,3), ref='3207')
     ),
     "BGM": Segment(tag="BGM").structure(
         Segment("document-message_name", min=0, max=1, ref='C002').structure(
