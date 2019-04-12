@@ -15,9 +15,6 @@ def downloaAttachmentsInEmail(m, emailid, outputdir):
     resp, data = m.fetch(emailid, "(BODY.PEEK[])")
     email_body = data[0][1]
     mail = email.message_from_bytes(data[0][1])
-    # print(mail.get_content_maintype())
-    #if mail.get_content_maintype() != 'multipart':
-        #return
     for i, part in enumerate(mail.walk()):
         if part.get_content_maintype() != 'multipart' and part.get('Content-Disposition') is not None:
             mail_from = mail.get('from')
