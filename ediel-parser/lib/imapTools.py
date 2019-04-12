@@ -24,10 +24,13 @@ def downloaAttachmentsInEmail(m, emailid, outputdir):
             filename = "{}-{}-{}".format(emailid_dec, i, part.get_filename())
             dir_path = "{}/{}".format(outputdir, mail_from)
             if not os.path.exists(dir_path):
+                print("[NEW-EMAIL] {}".format(mail_from))
                 os.mkdir(dir_path)
             file_path = "{}/{}".format(dir_path, filename)
-            file = open(file_path, 'wb')
-            file.write(part.get_payload(decode=True))
+            if not os.path.isfile(file_path):
+                print('[NEW-MESSAGE] {}'.format(file_path))
+                file = open(file_path, 'wb')
+                file.write(part.get_payload(decode=True))
 
 # Download all the attachment files for all emails in the inbox.
 def downloadAllAttachmentsInInbox(m, outputdir, query="(ALL)"):
