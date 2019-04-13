@@ -29,6 +29,8 @@ def handle_parse(content, args):
         result = result.replace("'", "'\n") # pretty print
     elif to_type == 'raw':
         result = payload
+    elif to_type == 'mail':
+        result = parser.toMail(work_result)
 
     return result
 
@@ -47,7 +49,8 @@ def run(args):
             else:
                 path = os.path.join(args.output_dir, filename)
                 fh = open(path, 'w')
-                fh.write(result)
+                print(result)
+                fh.write(result.__str__())
                 fh.close()
         return args.output_dir
     else:

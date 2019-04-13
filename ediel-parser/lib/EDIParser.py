@@ -4,12 +4,17 @@ from functools import reduce
 from hashlib import md5
 import time
 import email
+from email.utils import COMMASPACE, formatdate
+from email.mime.base import MIMEBase
+from email import encoders
 
 from pydifact.message import Message as PMessage
 
 from lib.Segment import Segment, Group
 from lib.UNSegment import UNSegment
 import lib.ediTools as edi
+
+EDI_FILENAME = 'edifact.edi'
 
 class EDIParser():
     def __init__(self, payload: str, format: str):
@@ -252,6 +257,24 @@ class EDIParser():
         # segments = edi.rstrip(segments)
         raw_result = map(lambda s: s.toEdi(), segments)
         return ''.join(raw_result)
+
+    def current_mail(self):
+        return email.message_from_string(self.payload)
+
+    def toMail(self, segments=None, send_from=None, send_to=None, subject=None, filename=None):
+        cur = self.current_mail()
+        mail = MIMEBase('application', "EDIFACT")
+        mail['From'] = cur['To'] if send_from is None else send_from
+        mail['To'] = cur['From']
+        mail['Date'] = formatdate(localtime=True)
+        mail['Subject'] = self['UNB'].toEdi()
+
+        file_content = self.toEdi(segments)
+        mail.set_payload(file_content)
+        encoders.encode_base64(mail)
+        mail.add_header('Content-Disposition', 'attachment; filename="{}"'.format(EDI_FILENAME))
+
+        return mail
 
     
 

@@ -2,12 +2,8 @@ import imaplib
 import smtplib
 import os
 import email
-from email.utils import COMMASPACE, formatdate
-from email.mime.base import MIMEBase
-from email import encoders
 
 SMTP_PORT = 587
-EDI_FILENAME = 'edifact.edi'
 class EDICommunicator():
     def __init__(self, *, username=None, password=None, server=None, output_dir=None, input_dir=None, use_tls=True):
         self.username = username
@@ -24,10 +20,6 @@ class EDICommunicator():
 
     def set_labels_email(self, email_id: str, labels: str):
         return self.imap.store(email_id, '+FLAGS', '({})'.format(labels))
-
-    def mail_from_str(self, mail_str):
-        mail = email.message_from_string(mail_str)
-        return mail
 
     def get_mail_without_label(self, labels:[str]):
         query_str = '(ALL)'
@@ -53,23 +45,3 @@ class EDICommunicator():
         server.login(self.username, self.password)
         server.sendmail(mail['From'], mail['To'], mail.as_string())
         server.quit()
-
-    def read_file(self, file_path):
-        fh = open(file_path, 'rb')
-        content = fh.read()
-        fh.close()
-        return content
-
-    def create_edi_mail(self, *, send_from, send_to, subject, file_content, file=None, file_name=''):
-        mail = MIMEBase('application', "EDIFACT")
-        mail['From'] = send_from
-        mail['To'] = COMMASPACE.join(send_to) if type(send_to) is list else send_to
-        mail['Date'] = formatdate(localtime=True)
-        mail['Subject'] = subject
-
-        file_content = file_content if file is None else self.read_file(file)
-        mail.set_payload(file_content)
-        encoders.encode_base64(mail)
-        mail.add_header('Content-Disposition', 'attachment; filename="{}"'.format(EDI_FILENAME))
-
-        return mail
