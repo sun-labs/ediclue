@@ -1,13 +1,10 @@
 import argparse
-import sys
 import json
 import os
 from lib.EDIParser import EDIParser
 
 def set_args(subparsers):
     parser = subparsers.add_parser('parse', description='parsing of edi to supported formats and generation of messages')
-    parser.add_argument('--input', type=argparse.FileType('r'), default=sys.stdin)
-    parser.add_argument('--output', type=argparse.FileType('w'), default=sys.stdout)
     parser.add_argument('--from', dest='from_type', choices=['edi', 'json'], default='edi'),
     parser.add_argument('--to', dest='to_type', choices=['json', 'raw', 'json-arr', 'edi'], default='json')
     parser.add_argument('--aperak', action='store_true')
