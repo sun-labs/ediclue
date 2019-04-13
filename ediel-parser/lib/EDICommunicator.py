@@ -26,6 +26,10 @@ class EDICommunicator():
         labels_str = '({})'.format(' '.join(labels))
         m.store(email_str, '+FLAGS', labels_str)
 
+    def mail_from_str(self, mail_str):
+        mail = email.message_from_string(mail_str)
+        return mail
+
     def send_mail(self, mail, port=SMTP_PORT):
         server = smtplib.SMTP()
         server.connect(self.server, port)
