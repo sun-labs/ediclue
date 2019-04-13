@@ -1,8 +1,12 @@
 import imaplib
-import email
 import os
+import email
+from email.utils import COMMASPACE, formatdate
+from email.mime.base import MIMEBase
+from email import encoders
 
 SMTP_PORT = 587
+EDI_FILENAME = 'edifact.edi'
 class EDICommunicator():
     def __init__(self, *, username=None, password=None, server=None, output_dir=None, input_dir=None, use_tls=True):
         self.username = username
@@ -28,3 +32,23 @@ class EDICommunicator():
         smtp.login(self.username, self.password)
         smtp.sendmail(mail['From'], mail['To'], mail.as_string())
         smtp.quit()
+
+    def read_file(self, file_path):
+        fh = open(file_path, 'rb')
+        content = fh.read()
+        fh.close()
+        return content
+
+    def create_edi_mail(self, *, send_from, send_to, subject, file_content, file=None, file_name=''):
+        mail = MIMEBase('application', "EDIFACT")
+        mail['From'] = send_from
+        mail['To'] = COMMASPACE.join(send_to) if type(send_to) is list else send_to
+        mail['Date'] = formatdate(localtime=True)
+        mail['Subject'] = subject
+
+        file_content = file_content if file is None else self.read_file(file)
+        mail.set_payload(file_content)
+        encoders.encode_base64(mail)
+        mail.add_header('Content-Disposition', 'attachment; filename="{}"'.format(EDI_FILENAME))
+
+        return mail
