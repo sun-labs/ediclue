@@ -17,6 +17,8 @@ def set_args(subparsers):
     parser.add_argument('--incoming-server', default=os.environ.get('SL_COM_INCOMING_SERVER'))
     parser.add_argument('--dry-run', action='store_true', help='Print mail without sending it')
 
+    parser.add_argument('--filter-label')
+
     parser.add_argument('--input-dir')
     parser.add_argument('--output-dir')
 
@@ -48,6 +50,7 @@ def get_com(args):
     com.server = args.server
     com.username = args.username
     com.password = args.password
+    com.init_imap()
     return com
 
 
@@ -77,5 +80,14 @@ def run(args):
         print(mail)
 
     elif action == "get":
-        pass
-        #emails = com.get_email('UID SEARCH HEADER Message-ID <>')
+        ids = com.get_mail_without_label(args.filter_label)
+        if args.output_dir is not None:
+                print("Storing {} mails in folder {}".format(len(ids), args.output_dir))
+        for mailid in ids:
+            result = com.get_mail_with(mailid)
+            file_name = '{}.mail'.format(mailid.decode('utf-8'))
+            file_path = os.path.join(args.output_dir, file_name)
+            fh = open(file_path, 'w')
+            fh.write(result.decode('utf-8'))
+            fh.close()
+        # emails = com.get_email('UID SEARCH HEADER Message-ID <>')

@@ -15,20 +15,37 @@ class EDICommunicator():
         self.server = server
         self.use_tls = use_tls
         if username is not None and password is not None and server is not None:
-            self.init_imap(username, password, server, use_tls)
+            self.init_imap()
 
-    def init_imap(self, username, password, server, use_tls):
-        self.imap = imaplib.IMAP4_SSL(server)
-        self.imap.login(user, password)
+    def init_imap(self):
+        self.imap = imaplib.IMAP4_SSL(self.server)
+        self.imap.login(self.username, self.password)
+        self.imap.select()
 
     def set_labels_email(self, email_id: [str], labels: [str]):
         email_str = email_id if type(email_id) is str else ','.join(email_id)
         labels_str = '({})'.format(' '.join(labels))
-        m.store(email_str, '+FLAGS', labels_str)
+        self.imap.store(email_str, '+FLAGS', labels_str)
 
     def mail_from_str(self, mail_str):
         mail = email.message_from_string(mail_str)
         return mail
+
+    def get_mail_without_label(self, labels:[str]):
+        query_str = '(ALL)'
+        if labels is not None:
+            if type(labels) is str: 
+                labels = [labels]
+            query_str = 'UNKEYWORD {}'.format(' '.join(labels))
+        res, emails = self.imap.search(None, query_str)
+        emails = emails[0].split()
+        return emails
+
+    def get_mail_with(self, email_id, selection='(BODY.PEEK[])'):
+        res, data = self.imap.fetch(email_id, selection)
+        return data[0][1] # mail body
+        # mail = email.message_from_bytes(data[0][1])
+        # return mail
 
     def send_mail(self, mail, port=SMTP_PORT):
         server = smtplib.SMTP()
