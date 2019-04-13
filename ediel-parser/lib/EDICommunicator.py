@@ -22,10 +22,8 @@ class EDICommunicator():
         self.imap.login(self.username, self.password)
         self.imap.select()
 
-    def set_labels_email(self, email_id: [str], labels: [str]):
-        email_str = email_id if type(email_id) is str else ','.join(email_id)
-        labels_str = '({})'.format(' '.join(labels))
-        self.imap.store(email_str, '+FLAGS', labels_str)
+    def set_labels_email(self, email_id: str, labels: str):
+        return self.imap.store(email_id, '+FLAGS', '({})'.format(labels))
 
     def mail_from_str(self, mail_str):
         mail = email.message_from_string(mail_str)
