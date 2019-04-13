@@ -1,4 +1,5 @@
 import imaplib
+import smtplib
 import os
 import email
 from email.utils import COMMASPACE, formatdate
@@ -26,12 +27,13 @@ class EDICommunicator():
         m.store(emails_str, '+FLAGS', labels_str)
 
     def send_mail(self, mail, port=SMTP_PORT):
-        smtp = smtplib.SMTP(self.server, port)
-        if use_tls:
-            smtp.starttls()
-        smtp.login(self.username, self.password)
-        smtp.sendmail(mail['From'], mail['To'], mail.as_string())
-        smtp.quit()
+        server = smtplib.SMTP()
+        server.connect(self.server, port)
+        if self.use_tls:
+            server.starttls()
+        server.login(self.username, self.password)
+        server.sendmail(mail['From'], mail['To'], mail.as_string())
+        server.quit()
 
     def read_file(self, file_path):
         fh = open(file_path, 'rb')
