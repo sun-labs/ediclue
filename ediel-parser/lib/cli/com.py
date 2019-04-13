@@ -18,6 +18,7 @@ def set_args(subparsers):
     parser.add_argument('--dry-run', action='store_true', help='Print mail without sending it')
 
     parser.add_argument('--filter-label')
+    parser.add_argument('--set-label')
 
     parser.add_argument('--input-dir')
     parser.add_argument('--output-dir')
@@ -59,6 +60,10 @@ def filter_blacklist(file):
     file = file.lower()
     return file not in ['.ds_store']
 
+def vprint(*args):
+    pass
+    #print(*args)
+
 def run(args):
     # dependencies on other arguments
     args.outgoing_server = args.server if args.outgoing_server is None else args.outgoing_server
@@ -91,16 +96,21 @@ def run(args):
             filenames = os.listdir(args.output_dir)
             cleaned = map(lambda x: x.replace('.mail', ''), filenames)
             files = list(filter(lambda f: f.isdigit(), cleaned))
-            print("Storing {} mails in folder {}".format(len(ids), args.output_dir))
+            vprint("Storing {} mails in folder {}".format(len(ids), args.output_dir))
         ids_encoded = list(map(lambda i: i.decode('utf-8'), ids))
         for mailid in ids_encoded:
             if mailid in files: 
-                print('skipping {}, already exists'.format(mailid))
+                vprint('skipping {}, already exists'.format(mailid))
                 continue
             result = com.get_mail_with(mailid)
+            result = result.decode('utf-8')
             file_name = '{}.mail'.format(mailid)
             file_path = os.path.join(args.output_dir, file_name)
             fh = open(file_path, 'w')
-            fh.write(result.decode('utf-8'))
+            fh.write(result)
             fh.close()
+        downloaded_ids = filter(lambda i: i not in files, ids_encoded)
+        downloaded_str = ' '.join(downloaded_ids)
+        if downloaded_str != '':
+            print(downloaded_str)
         # emails = com.get_email('UID SEARCH HEADER Message-ID <>')
