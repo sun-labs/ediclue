@@ -53,6 +53,11 @@ def get_com(args):
     com.init_imap()
     return com
 
+def filter_dirs(path):
+    return os.path.isfile(path)
+def filter_blacklist(file):
+    file = file.lower()
+    return file not in ['.ds_store']
 
 def run(args):
     # dependencies on other arguments
@@ -81,11 +86,19 @@ def run(args):
 
     elif action == "get":
         ids = com.get_mail_without_label(args.filter_label)
+        files = []
         if args.output_dir is not None:
-                print("Storing {} mails in folder {}".format(len(ids), args.output_dir))
-        for mailid in ids:
+            filenames = os.listdir(args.output_dir)
+            cleaned = map(lambda x: x.replace('.mail', ''), filenames)
+            files = list(filter(lambda f: f.isdigit(), cleaned))
+            print("Storing {} mails in folder {}".format(len(ids), args.output_dir))
+        ids_encoded = list(map(lambda i: i.decode('utf-8'), ids))
+        for mailid in ids_encoded:
+            if mailid in files: 
+                print('skipping {}, already exists'.format(mailid))
+                continue
             result = com.get_mail_with(mailid)
-            file_name = '{}.mail'.format(mailid.decode('utf-8'))
+            file_name = '{}.mail'.format(mailid)
             file_path = os.path.join(args.output_dir, file_name)
             fh = open(file_path, 'w')
             fh.write(result.decode('utf-8'))
