@@ -6,7 +6,7 @@ com = None
 
 def set_args(subparsers):
     parser = subparsers.add_parser('com', description='communication between EDI systems')
-    parser.add_argument('action', choices=['send', 'get'])
+    parser.add_argument('action', choices=['send', 'get', 'set'])
     parser.add_argument('--send-to')
     parser.add_argument('--send-from')
     parser.add_argument('--from', dest='from_type', choices=['edi', 'mail'], default='edi', help='The input content type'),
@@ -18,7 +18,7 @@ def set_args(subparsers):
     parser.add_argument('--dry-run', action='store_true', help='Print mail without sending it')
 
     parser.add_argument('--filter-label')
-    parser.add_argument('--set-label')
+    parser.add_argument('--set-label', nargs='+')
 
     parser.add_argument('--input-dir')
     parser.add_argument('--output-dir')
@@ -88,7 +88,11 @@ def run(args):
             payload = args.input.read()
             mail = handle_send(payload, args)
         print(mail)
-
+    elif action == "set":
+        if args.set_label is not None:
+            payload = args.input.read() # email ids as string
+            resp = com.set_labels_email(email_ids, args.set_label)
+            print(resp)
     elif action == "get":
         ids = com.get_mail_without_label(args.filter_label)
         files = []
@@ -107,6 +111,7 @@ def run(args):
             file_name = '{}.mail'.format(mailid)
             file_path = os.path.join(args.output_dir, file_name)
             fh = open(file_path, 'w')
+            vprint(result)
             fh.write(result)
             fh.close()
         downloaded_ids = filter(lambda i: i not in files, ids_encoded)
