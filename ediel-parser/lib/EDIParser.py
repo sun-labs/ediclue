@@ -3,6 +3,7 @@ from datetime import datetime
 from functools import reduce
 from hashlib import md5
 import time
+import email
 
 from pydifact.message import Message as PMessage
 
@@ -12,7 +13,7 @@ import lib.ediTools as edi
 
 class EDIParser():
     def __init__(self, payload: str, format: str):
-        self.payload = payload
+        self.payload = payload # raw input
         self.format = format
         self.segments = self.parse()
 
@@ -27,12 +28,29 @@ class EDIParser():
             return self.parse_edi()
         elif self.format == 'json':
             return self.parse_json()
+        elif self.format == 'mail':
+            return self.parse_email()
 
     def get_props_for(self, segment) -> (str, list):
         if self.format == 'json':
             return segment.pop(0), segment
-        elif self.format == 'edi':
+        elif self.format == 'edi' or self.format == 'mail':
             return segment.tag, segment.elements
+
+    def get_attachment_from_mail(self, mail_str=None):
+        mail_str = self.payload if mail_str is None else mail_str
+        mail = email.message_from_string(mail_str)
+        for i, part in enumerate(mail.walk()):
+            if part.get_content_maintype() != 'multipart' and part.get('Content-Disposition') is not None:
+                return part.get_payload(decode=True)
+        return mail
+
+    def parse_email(self):
+        content = self.get_attachment_from_mail()
+        content = content.decode('utf-8')
+        segments = self.parse_edi(content)
+        return segments
+        
 
     def load_segment(self, segment):
         tag, elements = self.get_props_for(segment)
@@ -40,23 +58,26 @@ class EDIParser():
         template.load(elements)
         return template
 
-    def parse_edi(self):
-        message = PMessage.from_str(self.payload)
+    def parse_edi(self, payload=None):
+        payload = self.payload if payload is None else payload
+        message = PMessage.from_str(payload)
         segments = Group(self.format).structure(
             *map(self.load_segment, message.segments)
         )
         return segments
 
-    def parse_json(self):
+    def parse_json(self, payload=None):
+        payload = self.payload if payload is None else payload
         segments = []
-        segment_list = self.flatten_json()
+        segment_list = self.flatten_json(payload)
         segments = Group(self.format).structure(
             *map(self.load_segment, segment_list)
         )
         return segments
 
-    def flatten_json(self) -> list:
-        message = json.loads(self.payload)
+    def flatten_json(self, payload=None) -> list:
+        payload = self.payload if payload is None else payload
+        message = json.loads(payload)
         result = []
         for segment in message:
             result.append(self._flatten_json(segment))
