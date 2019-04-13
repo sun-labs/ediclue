@@ -2,6 +2,7 @@ import imaplib
 import smtplib
 import os
 import email
+import time
 
 SMTP_PORT = 587
 class EDICommunicator():
@@ -20,6 +21,10 @@ class EDICommunicator():
 
     def set_labels_email(self, email_id: str, labels: str):
         return self.imap.store(email_id, '+FLAGS', '({})'.format(labels))
+
+    def mail_from_str(self, mail_str):
+        mail = email.message_from_string(mail_str)
+        return mail
 
     def get_mail_without_label(self, labels:[str]):
         query_str = '(ALL)'
@@ -44,4 +49,5 @@ class EDICommunicator():
             server.starttls()
         server.login(self.username, self.password)
         server.sendmail(mail['From'], mail['To'], mail.as_string())
+        self.imap.append('INBOX.Sent', '', imaplib.Time2Internaldate(time.time()), mail.as_string())
         server.quit()
