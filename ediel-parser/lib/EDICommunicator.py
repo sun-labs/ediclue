@@ -21,13 +21,10 @@ class EDICommunicator():
         self.imap = imaplib.IMAP4_SSL(server)
         self.imap.login(user, password)
 
-    def imap_cmd_for(self, email_id: [str] or str, command: str, argument: str):
-        email_str = email_id if type(email_id) is str else ','.join(email_id)
-        m.store(email_str, command, argument)
-
     def set_labels_email(self, email_id: [str], labels: [str]):
+        email_str = email_id if type(email_id) is str else ','.join(email_id)
         labels_str = '({})'.format(' '.join(labels))
-        self.imap_cmd_for(email_id, '+FLAGS', labels_str)
+        m.store(email_str, '+FLAGS', labels_str)
 
     def send_mail(self, mail, port=SMTP_PORT):
         server = smtplib.SMTP()
