@@ -49,5 +49,5 @@ class EDICommunicator():
             server.starttls()
         server.login(self.username, self.password)
         server.sendmail(mail['From'], mail['To'], mail.as_string())
-        self.imap.append('INBOX.Sent', '', imaplib.Time2Internaldate(time.time()), mail.as_string())
+        self.imap.append('INBOX.Sent', '', imaplib.Time2Internaldate(time.time()), mail.as_bytes())
         server.quit()

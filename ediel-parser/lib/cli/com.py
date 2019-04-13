@@ -18,6 +18,7 @@ def set_args(subparsers):
     parser.add_argument('--incoming-server', default=os.environ.get('SL_COM_INCOMING_SERVER'))
     parser.add_argument('--dry-run', action='store_true', help='Print mail without sending it')
     parser.add_argument('--dont-store', help='do not store sent email in sent folder')
+    parser.add_argument('--verbose', action='store_true')
 
     parser.add_argument('--filter-label')
     parser.add_argument('--set-label', nargs='+')
@@ -60,9 +61,9 @@ def filter_blacklist(file):
     file = file.lower()
     return file not in ['.ds_store']
 
-def vprint(*args):
-    pass
-    #print(*args)
+def vprint(args, *margs):
+    if args.verbose is True:
+        print(*margs)
 
 def run(args):
     # dependencies on other arguments
@@ -76,18 +77,19 @@ def run(args):
     if action == "send":
         mail = None
         if args.input_dir is not None:
-            vprint("Collecting files from {} with format {}".format(args.input_dir, args.from_type))
+            vprint(args,"Collecting files from {} with format {}".format(args.input_dir, args.from_type))
             files = tools.get_files(args.input_dir)
             for file_path in files:
                 fh = open(file_path, 'r')
                 content = fh.read()
+                vprint(args,content)
                 fh.close()
                 mail = handle_send(content, args)
             get_filename = lambda f: (f.split('/')[-1]).split('.')[0]
             email_ids = list(map(get_filename, files))
             email_str = ' '.join(email_ids)
-            # if args.dry_run is False:
-            print(email_str)
+            if args.dry_run is False:
+                print(email_str)
         else:
             payload = args.input.read()
             mail = handle_send(payload, args)
@@ -103,19 +105,19 @@ def run(args):
             filenames = os.listdir(args.output_dir)
             cleaned = map(lambda x: x.replace('.mail', ''), filenames)
             files = list(filter(lambda f: f.isdigit(), cleaned))
-            vprint("Storing {} mails in folder {}".format(len(ids), args.output_dir))
+            vprint(args,"Storing {} mails in folder {}".format(len(ids), args.output_dir))
         ids_encoded = list(map(lambda i: i.decode('utf-8'), ids))
         print(ids_encoded)
         for mailid in ids_encoded:
             if mailid in files: 
-                vprint('skipping {}, already exists'.format(mailid))
+                vprint(args,'skipping {}, already exists'.format(mailid))
                 continue
             result = com.get_mail_with(mailid)
             result = result.decode('utf-8')
             file_name = '{}.mail'.format(mailid)
             file_path = os.path.join(args.output_dir, file_name)
             fh = open(file_path, 'w')
-            vprint(result)
+            vprint(args,result)
             fh.write(result)
             fh.close()
         downloaded_ids = filter(lambda i: i not in files, ids_encoded)
