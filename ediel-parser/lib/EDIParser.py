@@ -5,7 +5,6 @@ from hashlib import md5
 import time
 
 from pydifact.message import Message as PMessage
-from pydifact.segments import Segment as PSegment
 
 from lib.Segment import Segment, Group
 from lib.UNSegment import UNSegment
@@ -16,6 +15,12 @@ class EDIParser():
         self.payload = payload
         self.format = format
         self.segments = self.parse()
+
+    def __getitem__(self, key):
+        if type(key) is str:
+            for segment in self.segments:
+                if segment.tag == key:
+                    return segment
 
     def parse(self):
         if self.format == 'edi':
@@ -130,7 +135,7 @@ class EDIParser():
 
         ftx_uts = UNSegment('FTX') # unix timestamp sparad
         ftx_uts[0] = 'ZZZ'
-        ftx_uts[3] = 'hello' # str(unix_timestamp)
+        ftx_uts[3] = str(unix_timestamp)
         aperak.append(ftx_uts)
 
         # doc = UNSegment('DOC')
@@ -223,21 +228,9 @@ class EDIParser():
     """
     def toEdi(self, segments=None) -> str:
         segments = self.segments if segments is None else segments
-        message = PMessage()
-        result = self._toEdi(segments, message)
-        return result
-
-    def _toEdi(self, segments = None, message = None) -> str:
-        for s in segments:
-            if s.group is True:
-                self._toEdi(s, message)
-            else:
-                elements = s.toList()
-                if elements is not None and len(elements) > 0:
-                    tag = s.tag
-                    segment = PSegment(tag, *elements)
-                    message.add_segment(segment)
-        return message.serialize()
+        # segments = edi.rstrip(segments)
+        raw_result = map(lambda s: s.toEdi(), segments)
+        return ''.join(raw_result)
 
     
 

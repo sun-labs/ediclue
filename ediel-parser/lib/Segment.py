@@ -1,3 +1,6 @@
+from pydifact.message import Message as PMessage
+from pydifact.segments import Segment as PSegment
+
 class Segment():
 
     def __init__(self, id=None, *, tag=None, length=(None, None), min=None, max=None, mandatory=False, children=[], value=None, ref=None, group=False):
@@ -177,6 +180,17 @@ class Segment():
         else: # base case
             result = segment.value
         return result
+
+    def toEdi(self):
+        assert(self.tag is not None)
+        message = PMessage()
+        tag, elements = self.tag, self.toList()
+        segment = PSegment(tag, None)
+        if elements is not None and len(elements) > 0:
+            segment = PSegment(tag, *elements)
+        message.add_segment(segment)
+        return message.serialize()
+        
 
 Group = Segment.create_group
 From = Segment.create_from
