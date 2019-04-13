@@ -28,9 +28,11 @@ def downloaAttachmentsInEmail(m, emailid, outputdir):
                 print('[NEW-MESSAGE] {}'.format(file_path))
                 file = open(file_path, 'wb')
                 file.write(part.get_payload(decode=True))
+                m.store(emailid,'+FLAGS','(DOWNLOADED)')
+                print(m.fetch(emailid, '(FLAGS)'))
 
 # Download all the attachment files for all emails in the inbox.
-def downloadAllAttachmentsInInbox(m, outputdir, query="(ALL)"):
+def downloadAllAttachmentsInInbox(m, outputdir, query="(UNFLAGGED)"):
     resp, items = m.search(None, query)
     items = items[0].split()
     for emailid in items:
