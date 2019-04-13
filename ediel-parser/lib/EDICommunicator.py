@@ -2,6 +2,7 @@ import imaplib
 import email
 import os
 
+SMTP_PORT = 587
 class EDICommunicator():
     def __init__(self, *, username=None, password=None, server=None, output_dir=None, input_dir=None, use_tls=True):
         self.username = username
@@ -20,5 +21,10 @@ class EDICommunicator():
         labels_str = '({})'.format(' '.join(labels))
         m.store(emails_str, '+FLAGS', labels_str)
 
-    def send_mail(self, mail):
-        pass
+    def send_mail(self, mail, port=SMTP_PORT):
+        smtp = smtplib.SMTP(self.server, port)
+        if use_tls:
+            smtp.starttls()
+        smtp.login(self.username, self.password)
+        smtp.sendmail(mail['From'], mail['To'], mail.as_string())
+        smtp.quit()
