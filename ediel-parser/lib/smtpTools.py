@@ -1,28 +1,24 @@
 import smtplib
 import os.path as op
+import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 from email import encoders
 
-def create_mail(send_from, send_to, subject, message, files=[]):
-    msg = MIMEMultipart()
+def create_mail(send_from, send_to, subject, message, file):
+    # msg = MIMEMultipart()
+    msg = MIMEBase('application', "EDIFACT")
     msg['From'] = send_from
     msg['To'] = COMMASPACE.join(send_to)
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
 
-    msg.attach(MIMEText(message))
-
-    for path in files:
-        part = MIMEBase('application', "octet-stream")
-        with open(path, 'rb') as file:
-            part.set_payload(file.read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition',
-                        'attachment; filename="{}"'.format(op.basename(path)))
-        msg.attach(part)
+    fh = open(file, 'rb')
+    msg.set_payload(fh.read())
+    encoders.encode_base64(msg)
+    msg.add_header('Content-Disposition', 'attachment; filename="{}"'.format(op.basename(file)))
 
     return msg
 
@@ -36,6 +32,17 @@ def send_mail(mail, server="localhost", port=587, username='', password='', use_
     smtp.quit()
 
 def send_mail_dir(username, password, server, input_dir):
-    mail = create_mail(username, ['viregistermail@gmail.com'], 'Hello world', 'test message from myself.', files=['/Users/victoringman/edi-messages/se.el@edilink.eu/1-0-EdilinkServices.edi'])
-    send_mail(mail, server=server, username=username, password=password)
-    print('sent')
+    emails = os.listdir(input_dir)
+    emails = list(filter(lambda e: "@" in e, emails))
+    for email in emails:
+        email_dir = op.join(input_dir, email)
+        edi_messages = os.listdir(email_dir)
+        for message in edi_messages:
+            file = op.join(email_dir, message)
+            mail = create_mail(username, ['viregistermail@gmail.com'], 'UNB Message', '', file=file)
+            print(mail)
+            send_mail(mail, server=server, username=username, password=password)
+            exit(0)
+            # send mail
+            # move to sent folder
+    # print('sent')
