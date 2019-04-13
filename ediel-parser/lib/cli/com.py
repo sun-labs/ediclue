@@ -2,6 +2,8 @@ import os
 from lib.EDICommunicator import EDICommunicator
 from lib.EDIParser import EDIParser
 
+com = None
+
 def set_args(subparsers):
     parser = subparsers.add_parser('com', description='communication between EDI systems')
     parser.add_argument('action', choices=['send', 'get'])
@@ -15,6 +17,33 @@ def set_args(subparsers):
     parser.add_argument('--incoming-server', default=os.environ.get('SL_COM_INCOMING_SERVER'))
     parser.add_argument('--dry-run', action='store_true', help='Print mail without sending it')
 
+    parser.add_argument('--input-dir')
+    parser.add_argument('--output-dir')
+
+def handle_send(payload, args):
+    com = get_com(args)
+    parser = EDIParser(payload, format=args.from_type)
+    subject = parser['UNB'].toEdi()
+
+    mail = com.create_edi_mail(
+        send_from=args.send_from,
+        send_to=args.send_to,
+        subject=subject,
+        file_content=payload
+    )
+
+    if args.dry_run is False:
+        com.send_mail(mail)
+
+    return mail
+
+def get_com(args):
+    com = EDICommunicator()
+    com.server = args.server
+    com.username = args.username
+    com.password = args.password
+    return com
+
 
 def run(args):
     # dependencies on other arguments
@@ -23,33 +52,23 @@ def run(args):
     args.send_from = args.username if args.send_from is None else args.send_from
 
     action = args.action
-
-    com = EDICommunicator()
-    com.server = args.server
-    com.username = args.username
-    com.password = args.password
+    com = get_com(args)
 
     if action == "send":
 
-        payload = args.input.read()
-        parser = EDIParser(payload, format=args.from_type)
-        subject = parser['UNB'].toEdi()
+        if args.input_dir is not None:
+            print("Collecting files from {} with format {}".format(args.input_dir, args.from_type))
+            files = os.listdir(args.input_dir)
+            for file in files:
+                file_path = os.path.join(args.input_dir, file)
+                fh = open(file_path, 'r')
+                content = fh.read()
+                fh.close()
+                mail = handle_send(content, args)
+                print(mail)
+        else:
+            payload = args.input.read()
+        
 
-        mail = com.create_edi_mail(
-            send_from=args.send_from,
-            send_to=args.send_to,
-            subject=subject,
-            file_content=payload
-        )
-
-        if args.dry_run is False:
-            com.send_mail(mail)
-
-        print(mail)
-
-    """
-    Fetch emails
-    """
     elif action == "get":
-        #com.get_email('UID SEARCH HEADER Message-ID <>')
-        pass
+        com.get_email('UID SEARCH HEADER Message-ID <>')
