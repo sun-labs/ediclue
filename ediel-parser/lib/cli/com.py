@@ -1,7 +1,8 @@
 import os
 from lib.EDICommunicator import EDICommunicator
 
-def set_args(parser):
+def set_args(subparsers):
+    parser = subparsers.add_parser('com', description='communication between EDI systems')
     parser.add_argument('action', choices=['aperak', 'download'])
     parser.add_argument('--username', default=os.environ.get('SL_COM_USERNAME'))
     parser.add_argument('--password', default=os.environ.get('SL_COM_PASSWORD'))
