@@ -31,7 +31,7 @@ Get emails and grab edi-content and parse edi and generate aperak message, conve
 ```bash
 python cli.py com get --username mail@domain.com --password secret --server imap.domain.com --imap-search-query "SUBJECT UTILTS NOT (SUBJECT spam)" --output-dir "./saved-emails" && python cli.py parse --from mail --to email --aperak --output-dir "./edi-aperak-mails" --input-dir "./saved-emails" && python cli.py com send --username mail@domain.com --password secret --server smtp.domain.com --input-dir "./edi-aperak-mails"
 # returns a list of email ids
-# every sent message will be stored in the imap folder INBOX.sent
+# every message sent will be stored in the "sent" folder of the mail account.
 ```
 
 ### Parser
