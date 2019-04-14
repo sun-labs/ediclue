@@ -18,6 +18,7 @@ def set_args(subparsers):
     parser.add_argument('--dont-store', help='do not store sent email in sent folder')
     parser.add_argument('--verbose', action='store_true')
 
+    parser.add_argument('--list-labels', action='store_true')
     parser.add_argument('--filter-label')
     parser.add_argument('--imap-search-query')
     parser.add_argument('--imap-store-query', nargs='+', help='two arguments required: command flags')
@@ -93,9 +94,12 @@ def run(args):
             resp = com.set_labels_email(email_ids, args.set_label)
             print(resp)
     elif action == "get":
-        mail_ids = []
+
+        if args.list_labels is True:
+            print(com.list_labels())
 
         # get stuff
+        mail_ids = []
         if args.filter_label:
             mail_ids = com.get_mail_without_label(args.filter_label)
         if args.imap_search_query:
