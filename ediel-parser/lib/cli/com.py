@@ -8,7 +8,7 @@ def set_args(subparsers):
     parser.add_argument('action', choices=['send', 'get', 'set'])
     parser.add_argument('--send-to')
     parser.add_argument('--send-from')
-    parser.add_argument('--from', dest='from_type', choices=['edi', 'mail'], default='edi', help='The input content type'),
+    parser.add_argument('--from', dest='from_type', choices=['edi', 'mail'], default='mail', help='The input content type'),
     parser.add_argument('--username', default=os.environ.get('SL_COM_USERNAME'))
     parser.add_argument('--password', default=os.environ.get('SL_COM_PASSWORD'))
     parser.add_argument('--server', default=os.environ.get('SL_COM_SERVER'))
@@ -60,6 +60,17 @@ def vprint(args, *margs):
     if args.verbose is True:
         print(*margs)
 
+def handle_store_query(args, mail_ids: [str]):
+    com = get_com(args)
+    query = args.imap_store_query
+    mail_ids_str = com.str_mail_ids(mail_ids)
+    if len(query) < 2: 
+        raise ValueError("You need to supply two arguments for imap-store-query, command and flags")
+    result_email_ids = com.imap_store_query(mail_ids_str, query[0], '({})'.format(query[1]))
+    result_emails_str = com.str_mail_ids(result_email_ids)
+    return result_emails_str
+
+
 def run(args):
     # dependencies on other arguments
     args.outgoing_server = args.server if args.outgoing_server is None else args.outgoing_server
@@ -83,8 +94,11 @@ def run(args):
             get_filename = lambda f: (f.split('/')[-1]).split('.')[0]
             email_ids = list(map(get_filename, files))
             email_str = com.str_mail_ids(email_ids)
-            if args.dry_run is False:
-                print(email_str)
+            # do stuff
+            if args.imap_store_query:
+                result_emails_str = handle_store_query(args, email_ids)
+                if result_emails_str != '':
+                    print(result_emails_str)
         else:
             payload = args.input.read()
             mail = handle_send(payload, args)
@@ -108,14 +122,7 @@ def run(args):
 
         # do stuff
         if args.imap_store_query:
-            query = args.imap_store_query
-            mail_ids_str = com.str_mail_ids(mail_ids)
-            if len(query) < 2: 
-                raise ValueError("You need to supply two arguments for imap-store-query, command and flags")
-            result_email_ids = com.imap_store_query(mail_ids_str, query[0], '({})'.format(query[1]))
-            result_emails_str = com.str_mail_ids(result_email_ids)
-            if result_emails_str != '':
-                print(result_emails_str)
+            handle_store_query(args, mail_ids)
             exit(0)
 
         for mailid in mail_ids:

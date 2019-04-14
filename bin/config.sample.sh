@@ -1,5 +1,3 @@
-#!/bin/bash
-
 export SL_COM_USERNAME=""
 export SL_COM_PASSWORD=""
 export SL_COM_SERVER=""
