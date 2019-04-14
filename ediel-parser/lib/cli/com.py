@@ -3,8 +3,6 @@ from lib.EDICommunicator import EDICommunicator
 from lib.EDIParser import EDIParser
 import lib.cli.tools as tools
 
-com = None
-
 def set_args(subparsers):
     parser = subparsers.add_parser('com', description='communication between EDI systems')
     parser.add_argument('action', choices=['send', 'get', 'set'])
@@ -21,6 +19,7 @@ def set_args(subparsers):
     parser.add_argument('--verbose', action='store_true')
 
     parser.add_argument('--filter-label')
+    parser.add_argument('--imap-search-query')
     parser.add_argument('--set-label', nargs='+')
 
     parser.add_argument('--input-dir')
@@ -54,12 +53,6 @@ def get_com(args):
     com.password = args.password
     com.init_imap()
     return com
-
-def filter_dirs(path):
-    return os.path.isfile(path)
-def filter_blacklist(file):
-    file = file.lower()
-    return file not in ['.ds_store']
 
 def vprint(args, *margs):
     if args.verbose is True:
@@ -99,29 +92,22 @@ def run(args):
             resp = com.set_labels_email(email_ids, args.set_label)
             print(resp)
     elif action == "get":
-        ids = com.get_mail_without_label(args.filter_label)
-        files = []
-        if args.output_dir is not None:
-            filenames = os.listdir(args.output_dir)
-            cleaned = map(lambda x: x.replace('.mail', ''), filenames)
-            files = list(filter(lambda f: f.isdigit(), cleaned))
-            vprint(args,"Storing {} mails in folder {}".format(len(ids), args.output_dir))
-        ids_encoded = list(map(lambda i: i.decode('utf-8'), ids))
-        print(ids_encoded)
-        for mailid in ids_encoded:
-            if mailid in files: 
-                vprint(args,'skipping {}, already exists'.format(mailid))
-                continue
-            result = com.get_mail_with(mailid)
-            result = result.decode('utf-8')
-            file_name = '{}.mail'.format(mailid)
-            file_path = os.path.join(args.output_dir, file_name)
-            fh = open(file_path, 'w')
-            vprint(args,result)
-            fh.write(result)
-            fh.close()
-        downloaded_ids = filter(lambda i: i not in files, ids_encoded)
-        downloaded_str = ' '.join(downloaded_ids)
-        if downloaded_str != '':
-            print(downloaded_str)
-        # emails = com.get_email('UID SEARCH HEADER Message-ID <>')
+        mail_ids = []
+        if args.filter_label:
+            mail_ids = com.get_mail_without_label(args.filter_label)
+        if args.imap_search_query:
+            mail_ids = com.imap_search_query(args.imap_search_query)
+        mail_ids = list(map(lambda i: i.decode('utf-8'), mail_ids))
+        for mailid in mail_ids:
+            result = com.get_mail_with(mailid).decode('utf-8')
+            if args.output_dir is not None:
+                file_name = '{}.eml'.format(mailid)
+                file_path = os.path.join(args.output_dir, file_name)
+                fh = open(file_path, 'w')
+                vprint(args,result)
+                fh.write(result)
+                fh.close()
+            else:
+                print(result)
+        downloaded_str = ' '.join(mail_ids)
+        if downloaded_str != '': print(downloaded_str)

@@ -26,6 +26,11 @@ class EDICommunicator():
         mail = email.message_from_string(mail_str)
         return mail
 
+    def imap_search_query(self, query):
+        res, emails = self.imap.search(None, query)
+        emails = emails[0].split()
+        return emails
+
     def get_mail_without_label(self, labels:[str]):
         query_str = '(ALL)'
         if labels is not None:
