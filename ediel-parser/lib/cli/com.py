@@ -20,6 +20,7 @@ def set_args(subparsers):
 
     parser.add_argument('--filter-label')
     parser.add_argument('--imap-search-query')
+    parser.add_argument('--imap-store-query', nargs='+', help='two arguments required: command flags')
     parser.add_argument('--set-label', nargs='+')
 
     parser.add_argument('--input-dir')
@@ -80,7 +81,7 @@ def run(args):
                 mail = handle_send(content, args)
             get_filename = lambda f: (f.split('/')[-1]).split('.')[0]
             email_ids = list(map(get_filename, files))
-            email_str = ' '.join(email_ids)
+            email_str = com.str_mail_ids(email_ids)
             if args.dry_run is False:
                 print(email_str)
         else:
@@ -93,11 +94,26 @@ def run(args):
             print(resp)
     elif action == "get":
         mail_ids = []
+
+        # get stuff
         if args.filter_label:
             mail_ids = com.get_mail_without_label(args.filter_label)
         if args.imap_search_query:
             mail_ids = com.imap_search_query(args.imap_search_query)
-        mail_ids = list(map(lambda i: i.decode('utf-8'), mail_ids))
+        mail_ids = com.format_mail_ids(mail_ids)
+
+        # do stuff
+        if args.imap_store_query:
+            query = args.imap_store_query
+            mail_ids_str = com.str_mail_ids(mail_ids)
+            if len(query) < 2: 
+                raise ValueError("You need to supply two arguments for imap-store-query, command and flags")
+            result_email_ids = com.imap_store_query(mail_ids_str, query[0], '({})'.format(query[1]))
+            result_emails_str = com.str_mail_ids(result_email_ids)
+            if result_emails_str != '':
+                print(result_emails_str)
+            exit(0)
+
         for mailid in mail_ids:
             result = com.get_mail_with(mailid).decode('utf-8')
             if args.output_dir is not None:
@@ -109,5 +125,5 @@ def run(args):
                 fh.close()
             else:
                 print(result)
-        downloaded_str = ' '.join(mail_ids)
+        downloaded_str = com.str_mail_ids(mail_ids)
         if downloaded_str != '': print(downloaded_str)

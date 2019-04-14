@@ -31,6 +31,19 @@ class EDICommunicator():
         emails = emails[0].split()
         return emails
 
+    def str_mail_ids(self, mail_ids: [str]):
+        return ','.join(mail_ids)
+
+    def format_mail_ids(self, mail_ids: [str]):
+        return list(map(lambda i: i.decode('utf-8'), mail_ids))
+
+    def imap_store_query(self, email_id, command, flags, return_raw=False):
+        res, emails = self.imap.store(email_id, command, flags)
+        emails = list(map(lambda e: e.decode('utf-8'), filter(None, emails)))
+        if return_raw is False and len(emails) > 0:
+            emails = list(map(lambda e: e.split()[0], emails))
+        return emails
+
     def get_mail_without_label(self, labels:[str]):
         query_str = '(ALL)'
         if labels is not None:

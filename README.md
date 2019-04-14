@@ -34,6 +34,12 @@ python cli.py com get --username mail@domain.com --password secret --server imap
 # every message sent will be stored in the "sent" folder of the mail account.
 ```
 
+Set specific emails to answered
+```bash
+python cli.py com get --username mail@domain.com --password secret --server imap.domain.com --imap-search-query "BEFORE 14-Apr-2019" --imap-store-query \"+FLAGS\" "\\Answered \\Seen"
+# returns list of email ids that was updated
+```
+
 ### Parser
 Create EDI messages and convert to different formats
 
