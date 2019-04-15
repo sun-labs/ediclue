@@ -275,6 +275,3 @@ class EDIParser():
         mail.add_header('Content-Disposition', 'attachment; filename="{}"'.format(EDI_FILENAME))
 
         return mail
-
-    
-
