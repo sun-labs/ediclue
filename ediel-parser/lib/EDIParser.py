@@ -267,7 +267,8 @@ class EDIParser():
         mail['From'] = cur['To'] if send_from is None else send_from
         mail['To'] = cur['From']
         mail['Date'] = formatdate(localtime=True)
-        mail['Subject'] = self['UNB'].toEdi()
+        unb = list(filter(lambda s: s.tag == 'UNB', segments))[0]
+        mail['Subject'] = unb.toEdi()
 
         file_content = self.toEdi(segments)
         mail.set_payload(file_content)

@@ -37,9 +37,10 @@ def handle_parse(content, args):
 def run(args):
 
     if args.input_dir is not None:
-        full_paths = tools.get_files(args.input_dir)
+        filenames, full_paths = tools.get_files(args.input_dir)
         for path in full_paths:
-            filename = '{}.{}'.format(os.path.basename(path), tools.extension_for_type(args.to_type))
+            extension = tools.extension_for_type(args.to_type)
+            filename = '{}.{}'.format(os.path.basename(path), extension)
             fh = open(path, 'r')
             content = fh.read()
             fh.close()
