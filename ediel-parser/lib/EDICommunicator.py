@@ -45,11 +45,11 @@ class EDICommunicator():
         emails = list(map(lambda e: e.decode('utf-8'), filter(None, emails)))
         if return_raw is False and len(emails) > 0:
             emails = list(map(lambda e: e.split()[0], emails))
-        return emails.join(',')
+        return self.str_mail_ids(emails)
 
     def get_mail_with(self, email_id: str, selection='(BODY.PEEK[])') -> str:
         res, data = self.imap.fetch(email_id, selection)
-        return data[0][1] # mail body
+        return data[0][1].decode('utf-8') # mail body
 
     def send_mail(self, mail, port=SMTP_PORT):
         server = smtplib.SMTP()

@@ -2,24 +2,24 @@ import os
 from lib.EDICommunicator import EDICommunicator
 from lib.EDIParser import EDIParser
 import lib.cli.tools as tools
+from types import SimpleNamespace
 
 def set_args(subparsers):
     parser = subparsers.add_parser('com', description='communication between EDI systems')
-    parser.add_argument('action', choices=['send', 'get', 'set'])
     parser.add_argument('--send-to')
     parser.add_argument('--send-from')
-    parser.add_argument('--from', dest='from_type', choices=['edi', 'mail'], default='mail', help='The input content type'),
+    parser.add_argument('--from', dest='from_type', choices=['mail'], default='mail', help='The input content type'),
     parser.add_argument('--username', default=os.environ.get('SL_COM_USERNAME'))
     parser.add_argument('--password', default=os.environ.get('SL_COM_PASSWORD'))
     parser.add_argument('--server', default=os.environ.get('SL_COM_SERVER'))
     parser.add_argument('--outgoing-server', default=os.environ.get('SL_COM_OUTGOING_SERVER'))
     parser.add_argument('--incoming-server', default=os.environ.get('SL_COM_INCOMING_SERVER'))
-    parser.add_argument('--dry-run', action='store_true', help='Print mail without sending it')
     parser.add_argument('--dont-store', help='do not store sent email in sent folder')
     parser.add_argument('--verbose', action='store_true')
 
+    parser.add_argument('--send', action='store_true', help='Send mail')
+
     parser.add_argument('--list-labels', action='store_true')
-    parser.add_argument('--filter-label')
     parser.add_argument('--imap-search-query')
     parser.add_argument('--imap-store-query', nargs='+', help='two arguments required: command flags')
     parser.add_argument('--set-label', nargs='+')
@@ -30,22 +30,10 @@ def set_args(subparsers):
 def handle_send(payload, args):
     com = get_com(args)
     mail = None # result email
-    if args.from_type == "edi":
-        parser = EDIParser(payload, format=args.from_type)
-        subject = parser['UNB'].toEdi()
-
-        mail = com.create_edi_mail(
-            send_from=args.send_from,
-            send_to=args.send_to,
-            subject=subject,
-            file_content=payload
-        )
-    elif args.from_type == "mail":
+    if args.from_type == "mail":
         mail = com.mail_from_str(payload)
-        
-    if args.dry_run is False:
+    if args.send is True:
         com.send_mail(mail)
-
     return mail
 
 def get_com(args):
@@ -60,16 +48,14 @@ def vprint(args, *margs):
     if args.verbose is True:
         print(*margs)
 
-def handle_store_query(args, mail_ids: [str]):
+def handle_store_query(args, mail_ids_str: str):
+    mail_ids = mail_ids_str.split(',') # to list
     com = get_com(args)
     query = args.imap_store_query
-    mail_ids_str = com.str_mail_ids(mail_ids)
-    if len(query) < 2: 
-        raise ValueError("You need to supply two arguments for imap-store-query, command and flags")
-    result_email_ids = com.imap_store_query(mail_ids_str, query[0], '({})'.format(query[1]))
-    result_emails_str = com.str_mail_ids(result_email_ids)
-    return result_emails_str
-
+    if len(query) < 2:  raise ValueError("You need to supply two arguments for imap-store-query, command and flags")
+    cmd, flags = query[0], query[1]
+    result_email_ids = com.imap_store_query(mail_ids_str, cmd, '({})'.format(flags))
+    return result_email_ids
 
 def run(args):
     # dependencies on other arguments
@@ -77,53 +63,94 @@ def run(args):
     args.incoming_server = args.server if args.incoming_server is None else args.incoming_server
     args.send_from = args.username if args.send_from is None else args.send_from
 
-    action = args.action
     com = get_com(args)
 
-    if action == "send":
-        mail = None
-        if args.input_dir is not None:
-            vprint(args,"Collecting files from {} with format {}".format(args.input_dir, args.from_type))
-            files = tools.get_files(args.input_dir)
-            for file_path in files:
-                fh = open(file_path, 'r')
+    # single commands
+    if args.list_labels is True:
+        exit(com.list_labels())
+
+    # parse inputs
+    load = SimpleNamespace()
+    load.files = False
+    if args.input_dir: # load mails from directory
+        load.files = True
+        load.filenames, load.paths = tools.get_files(args.input_dir)
+        mail_ids = com.str_mail_ids(com.mail_ids_from_filenames(load.filenames))
+    else:
+        if args.imap_search_query: # fetch from imap server
+            mail_ids = com.imap_search_query(args.imap_search_query)
+            mail_ids = com.str_mail_ids(com.format_mail_ids(mail_ids))
+        else: # read stdin
+            mail_ids = args.input.read()
+            mail_ids = mail_ids.replace('\n', '')
+    
+    mail_ids_lst = mail_ids.split(',')
+    # send emails
+    if args.send is True:
+        if load.files is True:
+            for i, path in enumerate(load.paths):
+                fh = open(path, 'r')
                 content = fh.read()
-                vprint(args,content)
-                fh.close()
                 mail = handle_send(content, args)
-            get_filename = lambda f: (f.split('/')[-1]).split('.')[0]
-            email_ids = list(map(get_filename, files))
-            email_str = com.str_mail_ids(email_ids)
+                if args.imap_store_query:
+                    mail_id = mail_ids_lst[i]
+                    response_id = handle_store_query(args, mail_id)
+                fh.close()
+    else: # write emails
+        if args.output_dir:
+            for mail_id in mail_ids_lst:
+                mail = com.get_mail_with(mail_id)
+                file_name = '{}.eml'.format(mail_id)
+                file_path = os.path.join(args.output_dir, file_name)
+                fh = open(file_path, 'w')
+                fh.write(mail)
+                fh.close()
+                
+    if args.send is False:
+        if args.imap_store_query:
+            mail_ids = handle_store_query(args, mail_ids)
+
+    print(mail_ids)
+    exit()
+
+    # either fetch or load dir, or string.
+
+    # TODO: Result in a string of email-ids
+    #       difference: each of the mail is fetched on different places.
+    # else:
+    #     if args.imap_search_query:
+    #     load.payload = args.input.read()
+
+    # work = SimpleNamespace()
+    # if args.imap_search_query:
+    #     work.result = com.imap_search_query(args.imap_search_query)
+    # work.result = com.format_mail_ids(work.result)
+    # work.result_str = com.str_mail_ids(work.result)
+
+    if action == "send":
+            # f_handle_file = lambda fh, fp, fn: handle_send(fh.read(), args)
+            f_handle_file = lambda fh, fp, fn: print(fh)
+            filenames, paths = tools.map_files(args.input_dir, f_handle_file)
+            mail_ids = com.mail_ids_from_filenames(filenames) # list of mail ids
+            email_str = com.str_mail_ids(mail_ids) # str of mail ids
+            print(email_str, mail_ids)
+            exit(0)
             # do stuff
             if args.imap_store_query:
                 result_emails_str = handle_store_query(args, email_ids)
-                if result_emails_str != '':
-                    print(result_emails_str)
-        else:
-            payload = args.input.read()
-            mail = handle_send(payload, args)
-    elif action == "set":
-        if args.set_label is not None:
-            payload = args.input.read() # email ids as string
-            resp = com.set_labels_email(email_ids, args.set_label)
-            print(resp)
+                print(result_emails_str)
+            else:
+                payload = args.input.read()
+                mail = handle_send(payload, args)
     elif action == "get":
 
         if args.list_labels is True:
             print(com.list_labels())
 
-        # get stuff
-        mail_ids = []
-        if args.filter_label:
-            mail_ids = com.get_mail_without_label(args.filter_label)
-        if args.imap_search_query:
-            mail_ids = com.imap_search_query(args.imap_search_query)
-        mail_ids = com.format_mail_ids(mail_ids)
-
         # do stuff
-        if args.imap_store_query:
-            handle_store_query(args, mail_ids)
-            exit(0)
+        # if args.imap_store_query:
+        #     handle_store_query(args, mail_ids)
+        #     exit(0)
 
         for mailid in mail_ids:
             result = com.get_mail_with(mailid).decode('utf-8')
@@ -134,7 +161,5 @@ def run(args):
                 vprint(args,result)
                 fh.write(result)
                 fh.close()
-            else:
-                print(result)
         downloaded_str = com.str_mail_ids(mail_ids)
-        if downloaded_str != '': print(downloaded_str)
+        print(downloaded_str)

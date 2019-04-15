@@ -35,3 +35,10 @@ def map_files(full_paths: [str], cb=None, *, mode='r'):
             fh = open(path, mode)
             cb(fh, path, extract_filename(path))
             fh.close()
+
+def extension_for_type(file_type):
+    ft = file_type
+    if ft == 'mail':
+        return 'eml'
+    else:
+        return file_type
