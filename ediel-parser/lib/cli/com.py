@@ -85,6 +85,10 @@ def run(args):
             mail_ids = mail_ids.replace('\n', '')
     
     mail_ids_lst = mail_ids.split(',')
+    mail_ids_lst = list(filter(lambda m: m is not '', map(lambda m: m.strip(), mail_ids_lst)))
+    n_mail_ids = len(mail_ids_lst)
+    if n_mail_ids == 0: raise SystemExit(1)
+
     # send emails
     if args.send is True:
         if load.files is True:
@@ -111,55 +115,3 @@ def run(args):
             mail_ids = handle_store_query(args, mail_ids)
 
     print(mail_ids)
-    exit()
-
-    # either fetch or load dir, or string.
-
-    # TODO: Result in a string of email-ids
-    #       difference: each of the mail is fetched on different places.
-    # else:
-    #     if args.imap_search_query:
-    #     load.payload = args.input.read()
-
-    # work = SimpleNamespace()
-    # if args.imap_search_query:
-    #     work.result = com.imap_search_query(args.imap_search_query)
-    # work.result = com.format_mail_ids(work.result)
-    # work.result_str = com.str_mail_ids(work.result)
-
-    if action == "send":
-            # f_handle_file = lambda fh, fp, fn: handle_send(fh.read(), args)
-            f_handle_file = lambda fh, fp, fn: print(fh)
-            filenames, paths = tools.map_files(args.input_dir, f_handle_file)
-            mail_ids = com.mail_ids_from_filenames(filenames) # list of mail ids
-            email_str = com.str_mail_ids(mail_ids) # str of mail ids
-            print(email_str, mail_ids)
-            exit(0)
-            # do stuff
-            if args.imap_store_query:
-                result_emails_str = handle_store_query(args, email_ids)
-                print(result_emails_str)
-            else:
-                payload = args.input.read()
-                mail = handle_send(payload, args)
-    elif action == "get":
-
-        if args.list_labels is True:
-            print(com.list_labels())
-
-        # do stuff
-        # if args.imap_store_query:
-        #     handle_store_query(args, mail_ids)
-        #     exit(0)
-
-        for mailid in mail_ids:
-            result = com.get_mail_with(mailid).decode('utf-8')
-            if args.output_dir is not None:
-                file_name = '{}.eml'.format(mailid)
-                file_path = os.path.join(args.output_dir, file_name)
-                fh = open(file_path, 'w')
-                vprint(args,result)
-                fh.write(result)
-                fh.close()
-        downloaded_str = com.str_mail_ids(mail_ids)
-        print(downloaded_str)
