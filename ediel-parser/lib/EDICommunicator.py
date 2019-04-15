@@ -22,46 +22,34 @@ class EDICommunicator():
     def list_labels(self):
         return self.imap.list()
 
-    def set_labels_email(self, email_id: str, labels: str):
-        return self.imap.store(email_id, '+FLAGS', '({})'.format(labels))
-
-    def mail_from_str(self, mail_str):
+    def mail_from_str(self, mail_str: str):
         mail = email.message_from_string(mail_str)
         return mail
 
-    def imap_search_query(self, query):
+    def imap_search_query(self, query: str):
         res, emails = self.imap.search(None, query)
         emails = emails[0].split()
         return emails
 
-    def str_mail_ids(self, mail_ids: [str]):
+    def str_mail_ids(self, mail_ids: [str]) -> str:
         return ','.join(mail_ids)
 
-    def format_mail_ids(self, mail_ids: [str]):
+    def mail_ids_from_filenames(self, filenames: [str]) -> [str]:
+        return list(map(lambda f: f.split('.')[0], filenames))
+
+    def format_mail_ids(self, mail_ids: [str]) -> [str]:
         return list(map(lambda i: i.decode('utf-8'), mail_ids))
 
-    def imap_store_query(self, email_id, command, flags, return_raw=False):
+    def imap_store_query(self, email_id: str, command, flags, return_raw=False) -> str:
         res, emails = self.imap.store(email_id, command, flags)
         emails = list(map(lambda e: e.decode('utf-8'), filter(None, emails)))
         if return_raw is False and len(emails) > 0:
             emails = list(map(lambda e: e.split()[0], emails))
-        return emails
+        return emails.join(',')
 
-    def get_mail_without_label(self, labels:[str]):
-        query_str = '(ALL)'
-        if labels is not None:
-            if type(labels) is str: 
-                labels = [labels]
-            query_str = 'UNKEYWORD {}'.format(' '.join(labels))
-        res, emails = self.imap.search(None, query_str)
-        emails = emails[0].split()
-        return emails
-
-    def get_mail_with(self, email_id, selection='(BODY.PEEK[])'):
+    def get_mail_with(self, email_id: str, selection='(BODY.PEEK[])') -> str:
         res, data = self.imap.fetch(email_id, selection)
         return data[0][1] # mail body
-        # mail = email.message_from_bytes(data[0][1])
-        # return mail
 
     def send_mail(self, mail, port=SMTP_PORT):
         server = smtplib.SMTP()
