@@ -5,7 +5,6 @@ FMAILS="$TMP_FOLDER/mails"
 FAPERAK="$TMP_FOLDER/mails-aperak"
 IMAP_SEARCH_QUERY="OR (NOT ANSWERED SUBJECT UTILTS) (SUBJECT UTILTS FLAGGED)"
 
-chmod +x ../config/config.sh && \
 source ../config/config.sh && \
 mkdir -p "$FMAILS" && \
 mkdir -p "$FAPERAK" && \
