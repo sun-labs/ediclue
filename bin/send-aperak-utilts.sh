@@ -14,5 +14,4 @@ cd ../ediel-parser/ && \
 "$SL_PYTHON_EXEC" cli.py com --input-dir "$FAPERAK" --imap-store-query \"+FLAGS\" "\\Seen \\Answered" --send | \
 "$SL_PYTHON_EXEC" cli.py com --imap-store-query \"-FLAGS\" "\\Flagged"
 
-rm "$FMAILS/*" 2> /dev/null
-rm "$FAPERAK/*" 2> /dev/null
+rm -r "$FMAILS/" "$FAPERAK/"
