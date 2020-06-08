@@ -1,5 +1,7 @@
 # EDI Command Line Interface Tools
 
+[![Analytics](https://ga-beacon.appspot.com/UA-19159071-9/ediclue)](https://github.com/igrigorik/ga-beacon)
+
 ## Requirements
 - Python 3
 
