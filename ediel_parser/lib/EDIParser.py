@@ -239,45 +239,45 @@ class EDIParser():
     """
     Dictionary out of payload segments
     """
-    def to_dict(self, segments = None) -> list:
+    def toDict(self, segments = None) -> list:
         segments = self.segments if segments is None else segments
         # segments = edi.rstrip(segments)
-        raw_result = map(lambda s: s.to_dict(), segments)
+        raw_result = map(lambda s: s.toDict(), segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
 
     """
     List out of payload segments
     """
-    def to_list(self, segments = None) -> list:
+    def toList(self, segments = None) -> list:
         segments = self.segments if segments is None else segments
         # segments = edi.rstrip(segments)
-        raw_result = map(lambda s: [s.tag, s.to_list()], segments)
+        raw_result = map(lambda s: [s.tag, s.toList()], segments)
         result = filter(lambda s: s is not None, raw_result)
         return list(result)
 
     """
     EDI string out of payload segments
     """
-    def to_edi(self, segments=None) -> str:
+    def toEdi(self, segments=None) -> str:
         segments = self.segments if segments is None else segments
         # segments = edi.rstrip(segments)
-        raw_result = map(lambda s: s.to_edi(), segments)
+        raw_result = map(lambda s: s.toEdi(), segments)
         return ''.join(raw_result)
 
     def current_mail(self):
         return email.message_from_string(self.payload)
 
-    def to_mail(self, segments=None, send_from=None, send_to=None, subject=None, filename=None):
+    def toMail(self, segments=None, send_from=None, send_to=None, subject=None, filename=None):
         cur = self.current_mail()
         mail = MIMEBase('application', "EDIFACT")
         mail['From'] = cur['To'] if send_from is None else send_from
         mail['To'] = cur['From']
         mail['Date'] = formatdate(localtime=True)
         unb = list(filter(lambda s: s.tag == 'UNB', segments))[0]
-        mail['Subject'] = unb.to_edi()
+        mail['Subject'] = unb.toEdi()
 
-        file_content = self.to_edi(segments)
+        file_content = self.toEdi(segments)
         mail.set_payload(file_content)
         encoders.encode_base64(mail)
         mail.add_header('Content-Disposition', 'attachment; filename="{}"'.format(EDI_FILENAME))
