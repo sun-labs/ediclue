@@ -10,9 +10,9 @@ from email import encoders
 
 from pydifact.message import Message as PMessage
 
-from lib.Segment import Segment, Group
-from lib.UNSegment import UNSegment
-import lib.ediTools as edi
+from ediel_parser.lib.Segment import Segment, Group
+from ediel_parser.lib.UNSegment import UNSegment
+import ediel_parser.lib.ediTools as edi
 
 EDI_FILENAME = 'edifact.edi'
 

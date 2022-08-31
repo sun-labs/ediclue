@@ -1,4 +1,4 @@
-from lib.Segment import Segment
+from ediel_parser.lib.Segment import Segment
 
 definitions = {
     "SEQ": Segment(tag="SEQ").structure(
