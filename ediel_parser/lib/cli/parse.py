@@ -21,16 +21,16 @@ def handle_parse(content, args):
 
     to_type = args.to_type
     if to_type == 'json':
-        result = json.dumps(parser.toDict(work_result))
+        result = json.dumps(parser.to_dict(work_result))
     elif to_type == 'json-arr':
-        result = json.dumps(parser.toList(work_result))
+        result = json.dumps(parser.to_list(work_result))
     elif to_type == 'edi':
-        result = parser.toEdi(work_result)
+        result = parser.to_edi(work_result)
         result = result.replace("'", "'\n") # pretty print
     elif to_type == 'raw':
         result = payload
     elif to_type == 'mail':
-        result = parser.toMail(work_result)
+        result = parser.to_mail(work_result)
 
     return result
 
