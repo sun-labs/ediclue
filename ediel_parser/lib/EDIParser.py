@@ -17,11 +17,16 @@ import ediel_parser.lib.ediTools as edi
 EDI_FILENAME = 'edifact.edi'
 
 class EDIParser():
-    def __init__(self, payload: str, format: str, our_ediel):
+    def __init__(self,
+                 payload: str,
+                 format: str,
+                 our_ediel: str,
+                 our_city: str):
         self.payload = payload # raw input
         self.format = format
         self.segments = self.parse()
         self.our_ediel_id = our_ediel
+        self.our_city = our_city
 
     def __getitem__(self, key):
         if type(key) is str:
@@ -210,7 +215,7 @@ class EDIParser():
         nad1 = UNSegment('NAD')
         nad1['party_qualifier'] = 'MS'
         nad1['party_identification_details'] = [self.our_ediel_id, 'SVK', '260']
-        nad1['city_name'] = 'STOCKHOLM'
+        nad1['city_name'] = self.our_city
         nad1['country-coded'] = 'SE'
         aperak.append(nad1)
 
