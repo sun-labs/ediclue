@@ -17,10 +17,11 @@ import ediel_parser.lib.ediTools as edi
 EDI_FILENAME = 'edifact.edi'
 
 class EDIParser():
-    def __init__(self, payload: str, format: str):
+    def __init__(self, payload: str, format: str, our_ediel):
         self.payload = payload # raw input
         self.format = format
         self.segments = self.parse()
+        self.our_ediel_id = our_ediel
 
     def __getitem__(self, key):
         if type(key) is str:
@@ -111,21 +112,17 @@ class EDIParser():
         segment_hash = segments.__str__()
         hash_string = '{}:{}'.format(segment_hash, unix_timestamp).encode('utf-8')
         UNIQUE_ID = str(md5(hash_string).hexdigest())[:14]
-
-        APERAK_PREFIX = 'SLAPE'
-        APERAK_START_ID = 1337
-        OUR_EDIEL_ID = '27860'
         RECIPIENT_EDIEL_ID = self.segments['UNB']['interchange_sender'][0].value
 
-        aperak_cnt = 0
+        # aperak_cnt = 0
 
         timestamp_now = edi.format_timestamp(datetime.now())
         partner_identification_code_qualifier = segments['UNB']['interchange_sender']['partner_identification_code_qualifier'].value
-        reference_no = segments['BGM']['r:1004'].value
+        # reference_no = segments['BGM']['r:1004'].value
 
         doc_name = segments['BGM']['document-message_name']
-        doc_message_name_code = doc_name['document-message_name-coded'].value
-        doc_responsible_agency = doc_name['code_list_responsible_agency-coded'].value
+        # doc_message_name_code = doc_name['document-message_name-coded'].value
+        # doc_responsible_agency = doc_name['code_list_responsible_agency-coded'].value
         doc_message_number = segments['BGM']['document-message_number'].value
         application_reference = segments['UNB']['application_reference'].value
 
@@ -135,7 +132,7 @@ class EDIParser():
         unb = UNSegment('UNB')
         unb['syntax_identifier']['syntax_identifier'] = 'UNOB'
         unb['syntax_identifier']['syntax_version_number'] = '3'
-        unb['interchange_sender'] = [OUR_EDIEL_ID, partner_identification_code_qualifier]
+        unb['interchange_sender'] = [self.our_ediel_id, partner_identification_code_qualifier]
         unb['interchange_recipient'] = [RECIPIENT_EDIEL_ID, partner_identification_code_qualifier]
         unb['date-time_of_preparation'] = [timestamp_now[2:8], timestamp_now[8:]]
         unb['interchange_control_reference'] = UNIQUE_ID
@@ -178,8 +175,8 @@ class EDIParser():
         # group 2
         nad1 = UNSegment('NAD')
         nad1['party_qualifier'] = 'MS' # message sender
-        nad1['party_identification_details'] = [OUR_EDIEL_ID, 'SVK', '260']
-        nad1['city_name'] = 'UPPSALA'
+        nad1['party_identification_details'] = [self.our_ediel_id, 'SVK', '260']
+        nad1['city_name'] = 'STOCKHOLM'
         nad1['country-coded'] = 'SE'
         aperak.append(nad1)
 
