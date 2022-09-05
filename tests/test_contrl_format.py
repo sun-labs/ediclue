@@ -35,7 +35,7 @@ class TestEdielParser(unittest.TestCase):
         )
         self.assertEqual(
             unb['interchange_recipient']['recipient_identification'].value,
-            "33333"
+            ediel_parser.segments['UNB']['interchange_sender']['sender_identification'].value
         )
         self.assertEqual(
             unb['application_reference'].value,

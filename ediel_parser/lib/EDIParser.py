@@ -106,7 +106,6 @@ class EDIParser():
         else:
             return segment
 
-
     def create_contrl(self, segments=None) -> [Segment]:
         segments = self.segments if segments is None else segments
         unix_timestamp = time.time()
