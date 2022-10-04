@@ -26,11 +26,11 @@ class TestEdielParser(unittest.TestCase):
                                  self.output_format,
                                  self.test_ediel,
                                  self.test_country)
-        contrl = ediel_parser.create_contrl()
+        aperak = ediel_parser.create_aperak()
 
-        unb = get_tag(contrl, "UNB")
-        unt = get_tag(contrl, "UNT")
-        unh = get_tag(contrl, "UNH")
+        unb = get_tag(aperak, "UNB")
+        unt = get_tag(aperak, "UNT")
+        unh = get_tag(aperak, "UNH")
         self.assertEqual(
             unb['interchange_sender']['sender_identification'].value,
             self.test_ediel
@@ -38,10 +38,6 @@ class TestEdielParser(unittest.TestCase):
         self.assertEqual(
             unb['interchange_recipient']['recipient_identification'].value,
             ediel_parser.segments['UNB']['interchange_sender']['sender_identification'].value
-        )
-        self.assertEqual(
-            unb['application_reference'].value,
-            ediel_parser.segments['UNB']['application_reference'].value
         )
         self.assertEqual(
             unb['application_reference'].value,

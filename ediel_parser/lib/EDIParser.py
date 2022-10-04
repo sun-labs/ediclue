@@ -150,6 +150,11 @@ class EDIParser():
         uci['action_coded'] = action_coded
         contrl.append(uci)
 
+        unt = UNSegment('UNT')
+        unt[0] = str(reduce(lambda acc, s: acc + 1, contrl, 0) - 1)
+        unt[1] = UNIQUE_ID  # segments['UNH']['r:0062'].value
+        contrl.append(unt)
+
         unz = UNSegment('UNZ')
         unz[0] = '1'
         unz[1] = UNIQUE_ID
