@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ediclue',
-    version="0.0.7",
+    version="0.0.8",
     description='An open source parser for EDIEL data',
     url='https://github.com/sun-labs/ediclue',
     author='Sun Labs Nordic AB',
