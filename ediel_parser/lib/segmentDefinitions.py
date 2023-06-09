@@ -1,4 +1,4 @@
-from lib.Segment import Segment
+from ediel_parser.lib.Segment import Segment
 
 definitions = {
     "SEQ": Segment(tag="SEQ").structure(
@@ -350,5 +350,19 @@ definitions = {
         Segment('communication_channel_identifier-coded', ref='3153'),
         Segment("number_of_copies_of_document_required", ref='1220'),
         Segment("number_of_originals_of_document_required", ref='1218')
+    ),
+    "UCI": Segment(tag="UCI").structure(
+        Segment("interchange_control_reference", length=(0, 13), mandatory=True, ref="0200"),
+        Segment("interchange_sender", ref="S002").structure(
+            Segment("sender_identification", length=(0, 35), mandatory=True, ref="0004"),
+            Segment("partner_identification_code_qualifier", length=(0, 4), ref="0007"),
+            Segment("address_for_reverse_routing", length=(0, 3), ref="0008")
+        ),
+        Segment("interchange_recipient", ref="S003").structure(
+            Segment("recipient_identification", length=(0, 35), mandatory=True, ref="0010"),
+            Segment("partner_identification_code_qualifier", length=(0, 4), ref="0007"),
+            Segment("routing_address", length=(0, 3), ref="0014"),
+        ),
+        Segment("action_coded", length=(0, 3), mandatory=True, ref="0083")
     )
 }

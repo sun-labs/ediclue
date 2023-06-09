@@ -1,5 +1,5 @@
-from lib.segmentDefinitions import definitions
-from lib.Segment import Segment
+from ediel_parser.lib.segmentDefinitions import definitions
+from ediel_parser.lib.Segment import Segment
 from copy import deepcopy
 
 def UNSegment(segmentId, **args):

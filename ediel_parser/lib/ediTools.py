@@ -1,4 +1,4 @@
-from lib.Segment import Segment
+from ediel_parser.lib.Segment import Segment
 
 def format_timestamp(ts):
     return ts.strftime("%Y%m%d%H%M")

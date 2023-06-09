@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='EDIEL Parser',
-    version=__version__,
+    name='ediclue',
+    version="0.0.8",
     description='An open source parser for EDIEL data',
-    url='https://github.com/sun-labs/ediel-parser',
+    url='https://github.com/sun-labs/ediclue',
     author='Sun Labs Nordic AB',
     author_email='code@sunlabs.se',
     license='Free for non-commercial use',
